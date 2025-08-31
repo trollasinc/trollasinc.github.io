@@ -1,0 +1,8 @@
+<div class="post">
+        <h2>Balancea! Balancea! Update</h2>
+        <div class="date">30 de Agosto, 2025</div>
+        <p>
+          Hemos añadido nuevas mecánicas de equilibrio y objetos secretos 👀.
+          Prepárate para reír y frustrarte al mismo tiempo.
+        </p>
+      </div>

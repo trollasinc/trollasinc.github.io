@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog - Trollas. Inc.</title>
+    <link rel="icon" href="../Logos/Trollas. Inc.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+        color: #111;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-weight: 700;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+      }
+      main {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .post {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: transform 0.3s;
+      }
+      .post:hover {
+        transform: translateY(-5px);
+      }
+      .post h2 {
+        margin-bottom: 0.5rem;
+      }
+      .post p {
+        color: #333;
+        line-height: 1.6;
+      }
+      .date {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Trollas. Inc.</h1>
+      <nav>
+        <a href="../index.html">⬅️ Volver ⬅️</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="post">
+        <h2>Nueva Web de Trollas. Inc.</h2>
+        <div class="date">31 de Agosto, 2025</div>
+        <p>
+          Nos transladamos a una nueva web, más moderna y funcional. Aquí podrás
+          encontrar información sobre nuestros juegos, servicios y noticias.
+          <br />
+          <br />
+          Muchas gracias por leer.
+          <br />
+          <br />
+          Contacto:
+          <a href="mailto:trollasinc2024@gmail.com">trollasinc2024@gmail.com</a>
+        </p>
+      </div>
+      <div class="post">
+        <h2>Primer Post del Blog</h2>
+        <div class="date">31 de Agosto, 2025</div>
+        <p>
+          Bienvenidos al blog de Trollas. Inc. 🚀 Aquí vamos a colgar noticias,
+          ideas random, avances de nuestros juegos y mucho más.
+        </p>
+      </div>
+    </main>
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+  </body>
+</html>
