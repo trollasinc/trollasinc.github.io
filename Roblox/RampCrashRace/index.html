@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../../Logos/Ramp Crash Race.png" />
+    <title>Ramp Crash Race</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+        color: #111;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-weight: 700;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+      }
+      main {
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+      .game-container {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+      }
+      .game-container img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1.5rem;
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Trollas. Inc.</h1>
+      <nav>
+        <a href="../../index.html">⬅️ Volver ⬅️</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="game-container">
+        <img src="../../Logos/Ramp Crash Race.png" alt="Balancea! Balancea!" />
+        <h2>Ramp Crash Race</h2>
+        <p>
+          Deslizate por la colina hasta la muerte, no hay limites, pero si
+          obstaculos...
+        </p>
+        <p>
+          El primer juego de Trollas. Inc. en Roblox, creado por
+          <a href="https://youtube.com/@leontrollas">@leontrollas</a>
+          y con la ayuda de varios amigos.
+        </p>
+        <a
+          href="https://www.roblox.com/es/games/75100399239845/Ramp-Crash-Race"
+          class="btn">
+          Jugar Ahora
+        </a>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+  </body>
+</html>
