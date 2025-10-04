@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirigiendo...</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center; /* Centra el texto horizontalmente */
+        margin-top: 50px;
+      }
+
+      form {
+        display: inline-block; /* Hace que el formulario se centre como bloque */
+      }
+
+      .g-recaptcha {
+        display: block; /* Hace que el captcha ocupe toda la línea */
+        margin: 0 auto; /* Centra el captcha */
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 15px; /* Un poco de espacio arriba del botón */
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Confirma que no eres un robot</h2>
+    <p>Debes completar el CAPTCHA para continuar al enlace.</p>
+
+    <form id="redirectForm">
+      <div
+        class="g-recaptcha"
+        data-sitekey="6LdXHN4rAAAAAOSHbtCPFO_X-F7QH9XRpAVutnGC"></div>
+      <br />
+      <br />
+      <button type="submit">Continuar</button>
+    </form>
+
+    <script>
+      const DESTINO =
+        "https://redirect-trollasinc-v031025build-play.netlify.app/"; // Cambia a tu URL de destino
+
+      document
+        .getElementById("redirectForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var response = grecaptcha.getResponse();
+
+          if (response.length === 0) {
+            alert("Por favor, completa el CAPTCHA.");
+            return;
+          }
+
+          // Redirigir al usuario
+          window.location.href = DESTINO;
+        });
+    </script>
+  </body>
+</html>
