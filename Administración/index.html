@@ -90,6 +90,11 @@
         border-radius: 8px;
         width: 30%;
       }
+
+      .stat-card2 {
+        width: 100%;
+        margin-bottom: 15px;
+      }
     </style>
   </head>
   <body>
@@ -106,6 +111,11 @@
     <div class="container" id="panel">
       <h2>Panel de Administración</h2>
       <button id="logoutBtn" style="background: #e74c3c">Cerrar sesión</button>
+
+      <div class="stat-card stat-card2">
+        <h3 id="totalVisitantes">0</h3>
+        <p>Visitantes</p>
+      </div>
 
       <div class="stats">
         <div class="stat-card">
@@ -155,6 +165,8 @@
         doc,
         deleteDoc,
         updateDoc,
+        getDoc,
+        increment,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
       // Configuración Firebase
@@ -167,6 +179,7 @@
         appId: "1:247309275509:web:33d62925b18474b2ac833c",
         measurementId: "G-G2T4HD22YH",
       };
+
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
@@ -191,6 +204,7 @@
       const clientsList = document.getElementById("clientsList");
       const totalClientes = document.getElementById("totalClientes");
       const totalPremium = document.getElementById("totalPremium");
+      const totalVisitantes = document.getElementById("totalVisitantes");
 
       let clientes = [];
       let editando = false;
@@ -214,28 +228,62 @@
       logoutBtn.addEventListener("click", () => signOut(auth));
 
       // Mantener sesión activa
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
           loginForm.style.display = "none";
           panel.style.display = "block";
-          cargarClientes();
+
+          try {
+            await cargarClientes();
+          } catch (err) {
+            console.error("Error cargando clientes:", err);
+          }
+
+          try {
+            await cargarVisitantes();
+          } catch (err) {
+            console.error("Error cargando visitantes:", err);
+          }
         } else {
           loginForm.style.display = "block";
           panel.style.display = "none";
+          limpiarFormulario();
+          clientes = [];
+          mostrarClientes();
+          actualizarEstadisticas();
         }
       });
 
       // Cargar clientes desde Firestore
       async function cargarClientes() {
-        const snapshot = await getDocs(collection(db, "clientes"));
-        clientes = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
-        mostrarClientes();
-        actualizarEstadisticas();
+        try {
+          const snapshot = await getDocs(collection(db, "clientes"));
+          clientes = snapshot.docs.map((docSnap) => ({
+            id: docSnap.id,
+            ...docSnap.data(),
+          }));
+          mostrarClientes();
+          actualizarEstadisticas();
+        } catch (err) {
+          console.error("Error cargando clientes:", err);
+          clientsList.innerHTML = `<div style="text-align:center;color:red;">Error cargando clientes</div>`;
+        }
       }
 
+      async function cargarVisitantes() {
+        try {
+          const visitasRef = doc(db, "estadisticas", "visitas");
+          const visitasSnap = await getDoc(visitasRef);
+          if (visitasSnap.exists()) {
+            totalVisitantes.textContent = visitasSnap.data().contador || 0;
+          } else {
+            totalVisitantes.textContent = 0;
+          }
+        } catch (err) {
+          console.error("Error cargando visitantes:", err);
+          totalVisitantes.textContent = "Error";
+        }
+      }
       // Agregar / Editar cliente
       addClientBtn.addEventListener("click", async () => {
         if (!nombre.value || !apellidos.value || !correo.value)

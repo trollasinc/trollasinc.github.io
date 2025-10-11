@@ -259,5 +259,57 @@
       </div>
     </section>
     <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        updateDoc,
+        increment,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+      // Config Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // Función para contar visita solo una vez por dispositivo
+      async function contarVisitaUnaVez() {
+        const yaVisito = localStorage.getItem("yaVisito"); // Revisar si ya entró
+
+        if (yaVisito) {
+          // Ya entró antes, no sumamos
+          return;
+        }
+
+        const visitasRef = doc(db, "estadisticas", "visitas");
+        const visitasSnap = await getDoc(visitasRef);
+
+        if (!visitasSnap.exists()) {
+          // Crear documento si no existe
+          await setDoc(visitasRef, { contador: 1 });
+        } else {
+          // Incrementar contador
+          await updateDoc(visitasRef, { contador: increment(1) });
+        }
+
+        // Marcar en localStorage que ya entró
+        localStorage.setItem("yaVisito", "true");
+      }
+
+      // Ejecutar al cargar la página
+      contarVisitaUnaVez();
+    </script>
   </body>
 </html>
