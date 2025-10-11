@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Administración - Trollas Inc.</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      body {
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 20px;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      input,
+      textarea,
+      select,
+      button {
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+      }
+      textarea {
+        resize: none;
+      }
+      button {
+        border: none;
+        background: #3498db;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      button:hover {
+        background: #2980b9;
+      }
+      .clientItem {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #panel {
+        display: none;
+      }
+      .imgPreview {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+      .stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+      }
+      .stat-card {
+        text-align: center;
+        background: #f0f2f5;
+        padding: 10px;
+        border-radius: 8px;
+        width: 30%;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Login -->
+    <div class="container" id="loginForm">
+      <h2>Login Admin</h2>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Contraseña" />
+      <button id="loginBtn">Iniciar sesión</button>
+      <p id="loginMsg" style="color: red; text-align: center"></p>
+    </div>
+
+    <!-- Panel Administración -->
+    <div class="container" id="panel">
+      <h2>Panel de Administración</h2>
+      <button id="logoutBtn" style="background: #e74c3c">Cerrar sesión</button>
+
+      <div class="stats">
+        <div class="stat-card">
+          <h3 id="totalClientes">0</h3>
+          <p>Clientes</p>
+        </div>
+        <div class="stat-card">
+          <h3 id="totalPremium">0</h3>
+          <p>Premium</p>
+        </div>
+      </div>
+
+      <h3>Agregar / Editar Cliente</h3>
+      <input type="text" id="nombre" placeholder="Nombre" />
+      <input type="text" id="apellidos" placeholder="Apellidos" />
+      <input type="email" id="correo" placeholder="Correo" />
+      <input type="tel" id="telefono" placeholder="Teléfono" />
+      <input type="text" id="plan" placeholder="Plan" />
+      <textarea
+        id="info"
+        rows="3"
+        placeholder="Información adicional"></textarea>
+      <input type="file" id="fotoUpload" accept="image/*" />
+      <button id="addClientBtn">Guardar Cliente</button>
+
+      <h3>Lista de Clientes</h3>
+      <div id="clientsList">
+        <div style="text-align: center; color: #7f8c8d">
+          No hay clientes aún
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        doc,
+        deleteDoc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+      // Configuración Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Elementos DOM
+      const loginForm = document.getElementById("loginForm");
+      const panel = document.getElementById("panel");
+      const loginEmail = document.getElementById("loginEmail");
+      const loginPassword = document.getElementById("loginPassword");
+      const loginBtn = document.getElementById("loginBtn");
+      const loginMsg = document.getElementById("loginMsg");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      const nombre = document.getElementById("nombre");
+      const apellidos = document.getElementById("apellidos");
+      const correo = document.getElementById("correo");
+      const telefono = document.getElementById("telefono");
+      const plan = document.getElementById("plan");
+      const info = document.getElementById("info");
+      const fotoUpload = document.getElementById("fotoUpload");
+      const addClientBtn = document.getElementById("addClientBtn");
+      const clientsList = document.getElementById("clientsList");
+      const totalClientes = document.getElementById("totalClientes");
+      const totalPremium = document.getElementById("totalPremium");
+
+      let clientes = [];
+      let editando = false;
+      let clienteEditandoId = null;
+      let imagenCliente = null;
+
+      // Login
+      loginBtn.addEventListener("click", async () => {
+        try {
+          await signInWithEmailAndPassword(
+            auth,
+            loginEmail.value,
+            loginPassword.value
+          );
+        } catch (err) {
+          loginMsg.textContent = err.message;
+        }
+      });
+
+      // Logout
+      logoutBtn.addEventListener("click", () => signOut(auth));
+
+      // Mantener sesión activa
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          loginForm.style.display = "none";
+          panel.style.display = "block";
+          cargarClientes();
+        } else {
+          loginForm.style.display = "block";
+          panel.style.display = "none";
+        }
+      });
+
+      // Cargar clientes desde Firestore
+      async function cargarClientes() {
+        const snapshot = await getDocs(collection(db, "clientes"));
+        clientes = snapshot.docs.map((docSnap) => ({
+          id: docSnap.id,
+          ...docSnap.data(),
+        }));
+        mostrarClientes();
+        actualizarEstadisticas();
+      }
+
+      // Agregar / Editar cliente
+      addClientBtn.addEventListener("click", async () => {
+        if (!nombre.value || !apellidos.value || !correo.value)
+          return alert("Nombre, Apellidos y Correo son obligatorios");
+        const cliente = {
+          nombre: nombre.value,
+          apellidos: apellidos.value,
+          correo: correo.value,
+          telefono: telefono.value,
+          plan: plan.value,
+          info: info.value,
+          foto: imagenCliente || "",
+        };
+        if (editando) {
+          cliente.id = clienteEditandoId;
+          const docRef = doc(db, "clientes", cliente.id);
+          await updateDoc(docRef, cliente);
+          editando = false;
+          clienteEditandoId = null;
+          addClientBtn.textContent = "Guardar Cliente";
+        } else {
+          await addDoc(collection(db, "clientes"), cliente);
+        }
+        limpiarFormulario();
+        cargarClientes();
+      });
+
+      // Eliminar cliente
+      window.eliminarCliente = async function (id) {
+        if (confirm("Eliminar este cliente?")) {
+          await deleteDoc(doc(db, "clientes", id));
+          cargarClientes();
+        }
+      };
+
+      // Editar cliente
+      window.editarCliente = function (id) {
+        const c = clientes.find((cl) => cl.id === id);
+        if (!c) return;
+        nombre.value = c.nombre;
+        apellidos.value = c.apellidos;
+        correo.value = c.correo;
+        telefono.value = c.telefono;
+        plan.value = c.plan;
+        info.value = c.info;
+        imagenCliente = c.foto;
+        editando = true;
+        clienteEditandoId = id;
+        addClientBtn.textContent = "Actualizar Cliente";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+
+      // Mostrar clientes
+      function mostrarClientes() {
+        if (clientes.length === 0) {
+          clientsList.innerHTML = `<div style="text-align:center;color:#7f8c8d;">No hay clientes aún</div>`;
+          return;
+        }
+        clientsList.innerHTML = "";
+        clientes.forEach((c) => {
+          const div = document.createElement("div");
+          div.className = "clientItem";
+          div.innerHTML = `
+      <div style="display:flex;align-items:center;">
+        ${
+          c.foto
+            ? `<img src="${c.foto}" class="imgPreview">`
+            : '<i class="fas fa-user fa-2x" style="margin-right:10px;"></i>'
+        }
+        <div>
+          <strong>${c.nombre} ${c.apellidos}</strong><br>
+          ${c.correo}<br>${c.telefono}<br>${c.plan}
+        </div>
+      </div>
+      <div>
+        <button onclick="editarCliente('${c.id}')">Editar</button>
+        <button onclick="eliminarCliente('${
+          c.id
+        }')" style="background:#e74c3c;">Eliminar</button>
+      </div>
+    `;
+          clientsList.appendChild(div);
+        });
+      }
+
+      // Estadísticas
+      function actualizarEstadisticas() {
+        totalClientes.textContent = clientes.length;
+        totalPremium.textContent = clientes.filter((c) =>
+          c.plan.toLowerCase().includes("premium")
+        ).length;
+      }
+
+      // Imagen
+      fotoUpload.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            imagenCliente = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      function limpiarFormulario() {
+        nombre.value = "";
+        apellidos.value = "";
+        correo.value = "";
+        telefono.value = "";
+        plan.value = "";
+        info.value = "";
+        fotoUpload.value = "";
+        imagenCliente = null;
+      }
+    </script>
+  </body>
+</html>
