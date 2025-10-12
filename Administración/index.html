@@ -147,6 +147,15 @@
           No hay clientes aún
         </div>
       </div>
+      <h3>Agregar Entrada al Blog</h3>
+      <input type="text" id="blogTitulo" placeholder="Título" />
+      <textarea
+        id="blogContenido"
+        rows="5"
+        placeholder="Contenido (puedes usar HTML)"></textarea>
+      <input type="text" id="blogEnlace" placeholder="Enlace opcional" />
+      <button id="addBlogBtn">Publicar Entrada</button>
+      <div id="blogMsg" style="color: green; margin-top: 5px"></div>
     </div>
 
     <script type="module">
@@ -399,6 +408,37 @@
         fotoUpload.value = "";
         imagenCliente = null;
       }
+      // Blog
+      const blogTitulo = document.getElementById("blogTitulo");
+      const blogContenido = document.getElementById("blogContenido");
+      const blogEnlace = document.getElementById("blogEnlace");
+      const addBlogBtn = document.getElementById("addBlogBtn");
+      const blogMsg = document.getElementById("blogMsg");
+
+      addBlogBtn.addEventListener("click", async () => {
+        if (!blogTitulo.value || !blogContenido.value) {
+          alert("Título y contenido son obligatorios");
+          return;
+        }
+
+        const nuevaEntrada = {
+          titulo: blogTitulo.value,
+          contenido: blogContenido.value,
+          fecha: new Date().toISOString(),
+          enlace: blogEnlace.value || "",
+        };
+
+        try {
+          await addDoc(collection(db, "blog"), nuevaEntrada);
+          blogMsg.textContent = "Entrada publicada correctamente ✅";
+          blogTitulo.value = "";
+          blogContenido.value = "";
+          blogEnlace.value = "";
+        } catch (err) {
+          console.error("Error publicando entrada:", err);
+          blogMsg.textContent = "Error al publicar la entrada ❌";
+        }
+      });
     </script>
   </body>
 </html>

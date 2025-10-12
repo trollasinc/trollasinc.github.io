@@ -85,71 +85,64 @@
       </nav>
     </header>
 
-    <main>
-      <div class="post">
-        <h2>Nuevo juego de Roblox!!!</h2>
-        <div class="date">5 de Octubre, 2025</div>
-        <p>
-          Acabamos de lanzar nuestro nuevo juego en Roblox, "Tralalero Tralala
-          OBBY"! Es un obby divertido y desafiante que te mantendrá entretenido
-          durante horas. ¡Ven a jugar y demuestra tus habilidades de parkour!
-          Para jugarlo haz click
-          <a href="../Redirect/VHJhbGFsZXJvIFRyYWxhbGEgT0JCWQ/" target="_blank">
-            aquí
-          </a>
-          .
-          <br />
-          <br />
-          Gracias por el apoyo!!!
-          <br />
-          <br />
-          Contacto:
-          <a href="mailto:trollasinc2024@gmail.com">trollasinc2024@gmail.com</a>
-        </p>
-      </div>
-      <div class="post">
-        <h2>Nuevo sistema de redirigidores</h2>
-        <div class="date">5 de Octubre, 2025</div>
-        <p>
-          Hemos implementado un nuevo sistema de redirigidores con CAPTCHA para
-          mejorar la seguridad y evitar accesos automatizados. Ahora, al hacer
-          clic en los enlaces de descarga, serás redirigido a una página donde
-          deberás completar un CAPTCHA antes de continuar. Esto nos ayuda a
-          proteger nuestros recursos y asegurar que solo usuarios legítimos
-          puedan acceder a las descargas.
-          <br />
-          <br />
-          Gracias por tu comprensión y apoyo continuo.
-          <br />
-          <br />
-          Contacto:
-          <a href="mailto:trollasinc2024@gmail.com">trollasinc2024@gmail.com</a>
-        </p>
-      </div>
-      <div class="post">
-        <h2>Nueva Web de Trollas. Inc.</h2>
-        <div class="date">31 de Agosto, 2025</div>
-        <p>
-          Nos transladamos a una nueva web, más moderna y funcional. Aquí podrás
-          encontrar información sobre nuestros juegos, servicios y noticias.
-          <br />
-          <br />
-          Muchas gracias por leer.
-          <br />
-          <br />
-          Contacto:
-          <a href="mailto:trollasinc2024@gmail.com">trollasinc2024@gmail.com</a>
-        </p>
-      </div>
-      <div class="post">
-        <h2>Primer Post del Blog</h2>
-        <div class="date">31 de Agosto, 2025</div>
-        <p>
-          Bienvenidos al blog de Trollas. Inc. 🚀 Aquí vamos a colgar noticias,
-          ideas random, avances de nuestros juegos y mucho más.
-        </p>
-      </div>
-    </main>
+    <main></main>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const main = document.querySelector("main");
+
+      async function cargarPosts() {
+        try {
+          const snapshot = await getDocs(collection(db, "blog"));
+          const posts = snapshot.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() }))
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+          main.innerHTML = ""; // limpiar posts
+
+          posts.forEach((post) => {
+            const div = document.createElement("div");
+            div.className = "post";
+            div.innerHTML = `
+        <h2>${post.titulo}</h2>
+        <div class="date">${new Date(post.fecha).toLocaleDateString("es-ES", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}</div>
+        <p>${post.contenido}</p>
+        ${
+          post.enlace ? `<a href="${post.enlace}" target="_blank">Aquí</a>` : ""
+        }
+      `;
+            main.appendChild(div);
+          });
+        } catch (err) {
+          console.error("Error cargando posts:", err);
+          main.innerHTML = "<p style='color:red;'>Error cargando posts</p>";
+        }
+      }
+
+      cargarPosts();
+    </script>
     <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
   </body>
 </html>
