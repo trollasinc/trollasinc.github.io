@@ -84,6 +84,17 @@
         border-radius: 50%;
         object-fit: cover;
       }
+      .navbar-admin {
+        text-align: center;
+        margin: 1rem 0;
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+      }
+      .navbar-admin a {
+        color: black;
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
@@ -103,13 +114,19 @@
         <button id="logoutBtn" style="background: crimson">
           Cerrar sesión
         </button>
-
-        <div class="section">
+        <div class="navbar-admin">
+          <a href="#visitantes">Visitantes</a>
+          <a href="#clientes">Clientes</a>
+          <a href="#blog">Blog</a>
+          <a href="#detalle-de-visitas">Detalle de visitas</a>
+          <a href="#tbodyRedirecciones">Registro de redirecciones</a>
+        </div>
+        <div id="visitantes" class="section">
           <h3>📊 Visitantes</h3>
           <p id="contadorVisitantes">Cargando...</p>
         </div>
 
-        <div class="section">
+        <div id="clientes" class="section">
           <h3>👥 Clientes</h3>
 
           <!-- Formulario cliente -->
@@ -150,7 +167,7 @@
           </table>
         </div>
 
-        <div class="section">
+        <div id="blog" class="section">
           <h3>📰 Subir entrada al blog</h3>
           <input id="blogTitulo" type="text" placeholder="Título" />
           <textarea
@@ -162,7 +179,7 @@
           <p id="blogMsg"></p>
         </div>
 
-        <div class="section">
+        <div id="detalle-de-visitas" class="section">
           <h3>📈 Detalle de visitas</h3>
           <button id="refreshVisitasBtn">🔄 Actualizar tabla</button>
           <table>
