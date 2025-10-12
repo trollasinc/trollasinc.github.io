@@ -430,48 +430,58 @@
       });
 
       // Detalle visitas
-      const tbodyVisitas = document.getElementById("tbodyVisitas");
-      async function cargarVisitasDetalle() {
-        tbodyVisitas.innerHTML =
-          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
-        try {
-          const q = query(
-            collection(db, "visitas_detalle"),
-            orderBy("timestamp", "desc"),
-            limit(50)
-          );
-          const snap = await getDocs(q);
-          if (snap.empty) {
-            tbodyVisitas.innerHTML =
-              "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
-            return;
-          }
-          tbodyVisitas.innerHTML = "";
-          snap.forEach((docSnap) => {
-            const d = docSnap.data();
-            const fecha = new Date(d.timestamp).toLocaleString();
-            const navegador = d.userAgent || "—";
-            const so = d.platform || "—";
-            const idioma = d.language || "—";
-            const resolucion =
-              d.screenWidth && d.screenHeight
-                ? `${d.screenWidth}x${d.screenHeight}`
-                : "—";
-            const pagina = d.page || "/";
-            tbodyVisitas.innerHTML += `<tr>
-        <td>${fecha}</td><td>${navegador}</td><td>${so}</td>
-        <td>${idioma}</td><td>${resolucion}</td><td>${pagina}</td>
+     const tbodyVisitas = document.getElementById("tbodyVisitas");
+
+async function cargarVisitasDetalle() {
+  tbodyVisitas.innerHTML =
+    "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+  try {
+    const q = query(
+      collection(db, "visitas_detalle"),
+      orderBy("timestamp", "desc"),
+      limit(50)
+    );
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      tbodyVisitas.innerHTML =
+        "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
+      return;
+    }
+
+    tbodyVisitas.innerHTML = "";
+    snap.forEach((docSnap) => {
+      const d = docSnap.data();
+      const fecha = d.timestamp ? new Date(d.timestamp).toLocaleString() : "—";
+      const navegador = d.navegador || "—";
+      const so = d.so || "—";
+      const idioma = d.idioma || "—";
+      const resolucion = d.resolucion || "—";
+      const pagina = d.page || "/";
+
+      tbodyVisitas.innerHTML += `<tr>
+        <td>${fecha}</td>
+        <td>${navegador}</td>
+        <td>${so}</td>
+        <td>${idioma}</td>
+        <td>${resolucion}</td>
+        <td>${pagina}</td>
       </tr>`;
-          });
-        } catch (err) {
-          console.error(err);
-          tbodyVisitas.innerHTML =
-            "<tr><td colspan='6'>Error cargando visitas</td></tr>";
-        }
-      }
-      document
-        .getElementById("refreshVisitasBtn")
-        .addEventListener("click", cargarVisitasDetalle);
+    });
+  } catch (err) {
+    console.error(err);
+    tbodyVisitas.innerHTML =
+      "<tr><td colspan='6'>Error cargando visitas</td></tr>";
+  }
+}
+
+// Llama a la función al cargar la página
+cargarVisitasDetalle();
+
+// Botón para refrescar
+document
+  .getElementById("refreshVisitasBtn")
+  ?.addEventListener("click", cargarVisitasDetalle);
     </script>
   </body>
 </html>
