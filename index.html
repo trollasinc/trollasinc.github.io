@@ -314,12 +314,44 @@
       contarVisitaUnaVez();
 
       function obtenerInfoDispositivo() {
+        const ua = navigator.userAgent || "";
+
+        // Sistema operativo
+        let so = "Desconocido";
+        if (/Android/i.test(ua)) so = "Android";
+        else if (/iPhone|iPad|iPod/i.test(ua)) so = "iOS";
+        else if (/Windows/i.test(ua)) so = "Windows";
+        else if (/Mac/i.test(ua)) so = "MacOS";
+        else if (/Linux/i.test(ua)) so = "Linux";
+
+        // Móvil o PC
+        const dispositivo = /Android|iPhone|iPad|iPod/i.test(ua)
+          ? "Móvil"
+          : "PC";
+
+        // Navegador
+        let navegador = "Desconocido";
+        if (/Chrome/i.test(ua) && !/Edge|OPR/i.test(ua)) navegador = "Chrome";
+        else if (/Firefox/i.test(ua)) navegador = "Firefox";
+        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua))
+          navegador = "Safari";
+        else if (/Edge/i.test(ua)) navegador = "Edge";
+        else if (/OPR|Opera/i.test(ua)) navegador = "Opera";
+
+        // Resolución real de la ventana (viewport)
+        const resolucion = `${window.innerWidth}x${window.innerHeight}`;
+
+        // Idioma
+        const idioma = navigator.language || navigator.userLanguage || "";
+
         return {
-          userAgent: navigator.userAgent || "",
-          platform: navigator.platform || "",
-          language: navigator.language || navigator.userLanguage || "",
-          screenWidth: window.screen?.width || null,
-          screenHeight: window.screen?.height || null,
+          visitanteID: obtenerVisitanteID(), // mantiene el ID local
+          timestamp: new Date().toISOString(),
+          so,
+          dispositivo,
+          navegador,
+          resolucion,
+          idioma,
           referrer: document.referrer || "",
           page: location.pathname + location.search || "",
         };
@@ -328,7 +360,6 @@
       function obtenerVisitanteID() {
         let id = localStorage.getItem("visitanteID");
         if (!id) {
-          // crypto.randomUUID() está soportado en navegadores modernos
           id =
             crypto && crypto.randomUUID
               ? crypto.randomUUID()
@@ -343,16 +374,9 @@
 
       async function registrarVisitaDetalle() {
         try {
-          const visitanteID = obtenerVisitanteID();
           const info = obtenerInfoDispositivo();
-          const docVisita = {
-            visitanteID,
-            timestamp: new Date().toISOString(),
-            ...info,
-          };
           // escribe un documento nuevo en 'visitas_detalle'
-          await addDoc(collection(db, "visitas_detalle"), docVisita);
-          // no bloquees nada si falla — solo console.error
+          await addDoc(collection(db, "visitas_detalle"), info);
         } catch (err) {
           console.error("Error registrando visita detalle:", err);
         }
@@ -360,8 +384,6 @@
 
       // Llamar a la función: registra cada carga de página
       registrarVisitaDetalle();
-
-      // --- FIN registro visitas_detalle ---
     </script>
   </body>
 </html>
