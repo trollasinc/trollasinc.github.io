@@ -120,6 +120,7 @@
           <a href="#blog">Blog</a>
           <a href="#detalle-de-visitas">Detalle de visitas</a>
           <a href="#tbodyRedirecciones">Registro de redirecciones</a>
+          <a href="#germanySection">Germany_18 Estadísticas</a>
         </div>
         <div id="visitantes" class="section">
           <h3>📊 Visitantes</h3>
@@ -220,6 +221,27 @@
             <tr><td colspan="7" style="text-align: center">Cargando...</td></tr>
           </tbody>
         </table>
+        <div id="germanySection" class="section">
+          <h3>📊 Estadísticas Germany 18</h3>
+          <button id="refreshGermany18Btn">🔄 Actualizar</button>
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha y hora</th>
+                <th>Navegador</th>
+                <th>SO</th>
+                <th>Idioma</th>
+                <th>Resolución</th>
+                <th>Página</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyGermany18">
+              <tr>
+                <td colspan="6" style="text-align: center">Cargando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </main>
 
@@ -304,6 +326,7 @@
           await cargarVisitantes();
           await cargarVisitasDetalle();
           await cargarRedirecciones();
+          await cargarVisitasGermany18();
         } else {
           loginForm.style.display = "block";
           panel.classList.add("hidden");
@@ -595,6 +618,87 @@
       document
         .getElementById("refreshRedirBtn")
         .addEventListener("click", cargarRedirecciones);
+
+      async function cargarVisitasGermany18() {
+        const tbodyGermany = document.getElementById("tbodyGermany18");
+        tbodyGermany.innerHTML =
+          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+
+        try {
+          const q = query(
+            collection(db, "germany_18_estadisticas"),
+            orderBy("timestamp", "desc"),
+            limit(50)
+          );
+          const snap = await getDocs(q);
+
+          if (snap.empty) {
+            tbodyGermany.innerHTML =
+              "<tr><td colspan='6' style='text-align:center'>No hay visitas registradas</td></tr>";
+            return;
+          }
+
+          tbodyGermany.innerHTML = "";
+          snap.forEach((docSnap) => {
+            const d = docSnap.data();
+            const ua = d.userAgent || "";
+
+            function detectarNavegador(ua) {
+              if (!ua) return "—";
+              if (ua.includes("Firefox")) return "Firefox";
+              if (ua.includes("Edg")) return "Edge";
+              if (ua.includes("Chrome")) return "Chrome";
+              if (ua.includes("Safari") && !ua.includes("Chrome"))
+                return "Safari";
+              if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
+              return "Desconocido";
+            }
+
+            function detectarSO(ua) {
+              if (!ua) return "—";
+              if (ua.includes("Windows")) return "Windows";
+              if (ua.includes("Android")) return "Android";
+              if (ua.includes("iPhone") || ua.includes("iPad")) return "iOS";
+              if (ua.includes("Mac OS")) return "macOS";
+              if (ua.includes("Linux")) return "Linux";
+              return "Desconocido";
+            }
+
+            const navegador = detectarNavegador(ua);
+            const so = detectarSO(ua);
+            const fecha = d.timestamp
+              ? new Date(d.timestamp).toLocaleString()
+              : "—";
+            const idioma = d.language || "—";
+            const resolucion =
+              d.screenWidth && d.screenHeight
+                ? `${d.screenWidth}x${d.screenHeight}`
+                : "—";
+            const pagina = d.page || "/";
+
+            tbodyGermany.innerHTML += `<tr>
+        <td>${fecha}</td>
+        <td>${navegador}</td>
+        <td>${so}</td>
+        <td>${idioma}</td>
+        <td>${resolucion}</td>
+        <td>${pagina}</td>
+      </tr>`;
+          });
+        } catch (err) {
+          console.error(err);
+          tbodyGermany.innerHTML =
+            "<tr><td colspan='6' style='text-align:center'>Error cargando visitas</td></tr>";
+        }
+      }
+
+      // Llamar a la función al cargar la página
+      cargarVisitasGermany18();
+
+      // Botón para refrescar
+      document
+        .getElementById("refreshGermany18Btn")
+        ?.addEventListener("click", cargarVisitasGermany18);
     </script>
   </body>
 </html>

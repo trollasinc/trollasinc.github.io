@@ -619,5 +619,72 @@ window.onload = mostrarAnuncio;
         text-align: center;
       }
     </style>
+<script type="module">
+    // --- FIREBASE IMPORTS ---
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+    // --- CONFIGURACIÓN FIREBASE ---
+   const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- FUNCIONES DE ANALÍTICA ---
+
+    // Obtiene información del dispositivo y navegador
+    function obtenerInfoDispositivo() {
+      return {
+        userAgent: navigator.userAgent || "",
+        platform: navigator.platform || "",
+        language: navigator.language || navigator.userLanguage || "",
+        screenWidth: window.screen?.width || null,
+        screenHeight: window.screen?.height || null,
+        referrer: document.referrer || "",
+        page: location.pathname + location.search || "",
+      };
+    }
+
+    // Genera ID único persistente para visitante
+    function obtenerVisitanteID() {
+      let id = localStorage.getItem("visitanteID_germany");
+      if (!id) {
+        id =
+          crypto && crypto.randomUUID
+            ? crypto.randomUUID()
+            : "v-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
+        localStorage.setItem("visitanteID_germany", id);
+      }
+      return id;
+    }
+
+    // Registra la visita en Firestore
+    async function registrarVisitaGermany() {
+      try {
+        const visitanteID = obtenerVisitanteID();
+        const info = obtenerInfoDispositivo();
+        const docVisita = {
+          visitanteID,
+          timestamp: new Date().toISOString(),
+          ...info,
+        };
+        await addDoc(collection(db, "germany_18_estadisticas"), docVisita);
+        console.log("Visita registrada en germany_18_estadisticas:", docVisita);
+      } catch (err) {
+        console.error("Error registrando visita:", err);
+      }
+    }
+
+    // --- LLAMADA AUTOMÁTICA AL CARGAR PÁGINA ---
+    registrarVisitaGermany();
+  </script>
   </body>
 </html>
