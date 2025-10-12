@@ -7,23 +7,23 @@
     <style>
       body {
         font-family: Arial, sans-serif;
-        text-align: center; /* Centra el texto horizontalmente */
+        text-align: center;
         margin-top: 50px;
       }
 
       form {
-        display: inline-block; /* Hace que el formulario se centre como bloque */
+        display: inline-block;
       }
 
       .g-recaptcha {
-        display: block; /* Hace que el captcha ocupe toda la línea */
-        margin: 0 auto; /* Centra el captcha */
+        display: block;
+        margin: 0 auto;
       }
 
       button {
         padding: 10px 20px;
         font-size: 16px;
-        margin-top: 15px; /* Un poco de espacio arriba del botón */
+        margin-top: 15px;
       }
     </style>
   </head>
@@ -36,27 +36,80 @@
         class="g-recaptcha"
         data-sitekey="6LdXHN4rAAAAAOSHbtCPFO_X-F7QH9XRpAVutnGC"></div>
       <br />
-      <br />
       <button type="submit">Continuar</button>
     </form>
 
-    <script>
-      const DESTINO =
-        "https://www.roblox.com/es/games/124971006914697/OBBY-Brainrots-NEW"; // Cambia a tu URL de destino
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
+      // 🔧 Tu configuración de Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const DESTINO =
+        "https://www.roblox.com/es/games/124971006914697/OBBY-Brainrots-NEW"; // Cambia a tu destino real
+
+      // --- Funciones auxiliares ---
+      function obtenerInfoDispositivo() {
+        return {
+          userAgent: navigator.userAgent || "",
+          platform: navigator.platform || "",
+          language: navigator.language || "",
+          screenWidth: window.screen?.width || null,
+          screenHeight: window.screen?.height || null,
+          page: location.pathname + location.search || "",
+        };
+      }
+
+      async function registrarRedireccion(destino) {
+        try {
+          const info = obtenerInfoDispositivo();
+          const registro = {
+            destino: destino,
+            timestamp: new Date().toISOString(),
+            ...info,
+          };
+          await addDoc(collection(db, "redirecciones"), registro);
+          console.log("✅ Redirección registrada");
+        } catch (err) {
+          console.error("Error registrando redirección:", err);
+        }
+      }
+
+      // --- Lógica del CAPTCHA y redirección ---
       document
         .getElementById("redirectForm")
-        .addEventListener("submit", function (e) {
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
-          var response = grecaptcha.getResponse();
+          const response = grecaptcha.getResponse();
 
           if (response.length === 0) {
             alert("Por favor, completa el CAPTCHA.");
             return;
           }
 
-          // Redirigir al usuario
-          window.location.href = DESTINO;
+          // Registrar redirección antes de salir
+          await registrarRedireccion(DESTINO);
+
+          // Redirigir tras un breve delay (por seguridad)
+          setTimeout(() => {
+            window.location.href = DESTINO;
+          }, 800);
         });
     </script>
   </body>

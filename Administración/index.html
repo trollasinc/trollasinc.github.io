@@ -185,6 +185,24 @@
             </tbody>
           </table>
         </div>
+        <h2>📎 Registro de Redirecciones</h2>
+        <button id="refreshRedirBtn">🔄 Actualizar</button>
+        <table border="1" cellspacing="0" cellpadding="6">
+          <thead>
+            <tr>
+              <th>Fecha y hora</th>
+              <th>Navegador</th>
+              <th>SO</th>
+              <th>Idioma</th>
+              <th>Resolución</th>
+              <th>Origen</th>
+              <th>Destino</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyRedirecciones">
+            <tr><td colspan="7" style="text-align: center">Cargando...</td></tr>
+          </tbody>
+        </table>
       </div>
     </main>
 
@@ -268,6 +286,7 @@
           await cargarClientes();
           await cargarVisitantes();
           await cargarVisitasDetalle();
+          await cargarRedirecciones();
         } else {
           loginForm.style.display = "block";
           panel.classList.add("hidden");
@@ -430,36 +449,38 @@
       });
 
       // Detalle visitas
-     const tbodyVisitas = document.getElementById("tbodyVisitas");
+      const tbodyVisitas = document.getElementById("tbodyVisitas");
 
-async function cargarVisitasDetalle() {
-  tbodyVisitas.innerHTML =
-    "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
-  try {
-    const q = query(
-      collection(db, "visitas_detalle"),
-      orderBy("timestamp", "desc"),
-      limit(50)
-    );
-    const snap = await getDocs(q);
+      async function cargarVisitasDetalle() {
+        tbodyVisitas.innerHTML =
+          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+        try {
+          const q = query(
+            collection(db, "visitas_detalle"),
+            orderBy("timestamp", "desc"),
+            limit(50)
+          );
+          const snap = await getDocs(q);
 
-    if (snap.empty) {
-      tbodyVisitas.innerHTML =
-        "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
-      return;
-    }
+          if (snap.empty) {
+            tbodyVisitas.innerHTML =
+              "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
+            return;
+          }
 
-    tbodyVisitas.innerHTML = "";
-    snap.forEach((docSnap) => {
-      const d = docSnap.data();
-      const fecha = d.timestamp ? new Date(d.timestamp).toLocaleString() : "—";
-      const navegador = d.navegador || "—";
-      const so = d.so || "—";
-      const idioma = d.idioma || "—";
-      const resolucion = d.resolucion || "—";
-      const pagina = d.page || "/";
+          tbodyVisitas.innerHTML = "";
+          snap.forEach((docSnap) => {
+            const d = docSnap.data();
+            const fecha = d.timestamp
+              ? new Date(d.timestamp).toLocaleString()
+              : "—";
+            const navegador = d.navegador || "—";
+            const so = d.so || "—";
+            const idioma = d.idioma || "—";
+            const resolucion = d.resolucion || "—";
+            const pagina = d.page || "/";
 
-      tbodyVisitas.innerHTML += `<tr>
+            tbodyVisitas.innerHTML += `<tr>
         <td>${fecha}</td>
         <td>${navegador}</td>
         <td>${so}</td>
@@ -467,21 +488,96 @@ async function cargarVisitasDetalle() {
         <td>${resolucion}</td>
         <td>${pagina}</td>
       </tr>`;
-    });
-  } catch (err) {
-    console.error(err);
-    tbodyVisitas.innerHTML =
-      "<tr><td colspan='6'>Error cargando visitas</td></tr>";
-  }
-}
+          });
+        } catch (err) {
+          console.error(err);
+          tbodyVisitas.innerHTML =
+            "<tr><td colspan='6'>Error cargando visitas</td></tr>";
+        }
+      }
 
-// Llama a la función al cargar la página
-cargarVisitasDetalle();
+      // Llama a la función al cargar la página
+      cargarVisitasDetalle();
 
-// Botón para refrescar
-document
-  .getElementById("refreshVisitasBtn")
-  ?.addEventListener("click", cargarVisitasDetalle);
+      // Botón para refrescar
+      document
+        .getElementById("refreshVisitasBtn")
+        ?.addEventListener("click", cargarVisitasDetalle);
+
+      const tbodyRedirecciones = document.getElementById("tbodyRedirecciones");
+
+      async function cargarRedirecciones() {
+        tbodyRedirecciones.innerHTML =
+          "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
+        try {
+          const q = query(
+            collection(db, "redirecciones"),
+            orderBy("timestamp", "desc"),
+            limit(50)
+          );
+          const snap = await getDocs(q);
+          if (snap.empty) {
+            tbodyRedirecciones.innerHTML =
+              "<tr><td colspan='7' style='text-align:center'>No hay redirecciones registradas</td></tr>";
+            return;
+          }
+
+          tbodyRedirecciones.innerHTML = "";
+          snap.forEach((docSnap) => {
+            const d = docSnap.data();
+            const fecha = new Date(d.timestamp).toLocaleString();
+            function detectarNavegador(ua) {
+              if (!ua) return "—";
+              if (ua.includes("Firefox")) return "Firefox";
+              if (ua.includes("Edg")) return "Edge";
+              if (ua.includes("Chrome")) return "Chrome";
+              if (ua.includes("Safari") && !ua.includes("Chrome"))
+                return "Safari";
+              if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
+              return "Desconocido";
+            }
+
+            function detectarSO(ua) {
+              if (!ua) return "—";
+              if (ua.includes("Windows")) return "Windows";
+              if (ua.includes("Android")) return "Android";
+              if (ua.includes("iPhone") || ua.includes("iPad")) return "iOS";
+              if (ua.includes("Mac OS")) return "macOS";
+              if (ua.includes("Linux")) return "Linux";
+              return "Desconocido";
+            }
+
+            const navegador = detectarNavegador(d.userAgent);
+            const so = detectarSO(d.userAgent);
+            const idioma = d.language || "—";
+            const resolucion =
+              d.screenWidth && d.screenHeight
+                ? `${d.screenWidth}x${d.screenHeight}`
+                : "—";
+            const origen = d.origen || "/";
+            const destino = d.destino || "—";
+
+            tbodyRedirecciones.innerHTML += `
+        <tr>
+          <td>${fecha}</td>
+          <td>${navegador}</td>
+          <td>${so}</td>
+          <td>${idioma}</td>
+          <td>${resolucion}</td>
+          <td>${origen}</td>
+          <td>${destino}</td>
+        </tr>`;
+          });
+        } catch (err) {
+          console.error(err);
+          tbodyRedirecciones.innerHTML =
+            "<tr><td colspan='7' style='text-align:center'>Error cargando redirecciones</td></tr>";
+        }
+      }
+
+      document
+        .getElementById("refreshRedirBtn")
+        .addEventListener("click", cargarRedirecciones);
     </script>
   </body>
 </html>
