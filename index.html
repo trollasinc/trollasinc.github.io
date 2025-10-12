@@ -268,6 +268,8 @@
         setDoc,
         updateDoc,
         increment,
+        collection,
+        addDoc,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
       // Config Firebase
@@ -310,6 +312,56 @@
 
       // Ejecutar al cargar la página
       contarVisitaUnaVez();
+
+      function obtenerInfoDispositivo() {
+        return {
+          userAgent: navigator.userAgent || "",
+          platform: navigator.platform || "",
+          language: navigator.language || navigator.userLanguage || "",
+          screenWidth: window.screen?.width || null,
+          screenHeight: window.screen?.height || null,
+          referrer: document.referrer || "",
+          page: location.pathname + location.search || "",
+        };
+      }
+
+      function obtenerVisitanteID() {
+        let id = localStorage.getItem("visitanteID");
+        if (!id) {
+          // crypto.randomUUID() está soportado en navegadores modernos
+          id =
+            crypto && crypto.randomUUID
+              ? crypto.randomUUID()
+              : "v-" +
+                Date.now() +
+                "-" +
+                Math.random().toString(36).slice(2, 9);
+          localStorage.setItem("visitanteID", id);
+        }
+        return id;
+      }
+
+      async function registrarVisitaDetalle() {
+        try {
+          const visitanteID = obtenerVisitanteID();
+          const info = obtenerInfoDispositivo();
+          const docVisita = {
+            visitanteID,
+            timestamp: new Date().toISOString(),
+            ...info,
+          };
+          // escribe un documento nuevo en 'visitas_detalle'
+          await addDoc(collection(db, "visitas_detalle"), docVisita);
+          // no bloquees nada si falla — solo console.error
+        } catch (err) {
+          console.error("Error registrando visita detalle:", err);
+        }
+      }
+
+      // Llamar a la función: registra cada carga de página
+      registrarVisitaDetalle();
+
+      // --- FIN registro visitas_detalle ---
     </script>
   </body>
 </html>

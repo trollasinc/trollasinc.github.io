@@ -3,182 +3,214 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Panel Administración - Trollas Inc.</title>
+    <title>Panel de administración - Trollas Inc.</title>
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
     <style>
       * {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family: "Inter", sans-serif;
       }
       body {
-        background: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        padding: 20px;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 0;
+        color: #111;
       }
-      .container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        width: 100%;
-        max-width: 500px;
-        margin-bottom: 20px;
-      }
-      h2 {
+      header {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 1rem;
         text-align: center;
-        margin-bottom: 20px;
+        font-weight: 700;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      main {
+        max-width: 1000px;
+        margin: 2rem auto;
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
       input,
-      textarea,
-      select,
-      button {
+      button,
+      textarea {
         width: 100%;
         padding: 10px;
-        margin: 5px 0;
-        border-radius: 5px;
+        margin: 8px 0;
+        border-radius: 8px;
         border: 1px solid #ccc;
       }
-      textarea {
-        resize: none;
-      }
       button {
-        border: none;
-        background: #3498db;
+        background: #007bff;
         color: white;
-        font-size: 16px;
         cursor: pointer;
-        transition: 0.2s;
+        border: none;
+        transition: 0.3s;
       }
       button:hover {
-        background: #2980b9;
+        background: #0056b3;
       }
-      .clientItem {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 5px 0;
-        border-radius: 5px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      #panel {
+      .hidden {
         display: none;
       }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      th {
+        background: #f0f0f0;
+      }
+      .section {
+        margin-top: 2rem;
+        border-top: 1px solid #ccc;
+        padding-top: 1rem;
+      }
       .imgPreview {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin-right: 10px;
-      }
-      .stats {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 15px;
-      }
-      .stat-card {
-        text-align: center;
-        background: #f0f2f5;
-        padding: 10px;
-        border-radius: 8px;
-        width: 30%;
-      }
-
-      .stat-card2 {
-        width: 100%;
-        margin-bottom: 15px;
       }
     </style>
   </head>
   <body>
-    <!-- Login -->
-    <div class="container" id="loginForm">
-      <h2>Login Admin</h2>
-      <input type="email" id="loginEmail" placeholder="Email" />
-      <input type="password" id="loginPassword" placeholder="Contraseña" />
-      <button id="loginBtn">Iniciar sesión</button>
-      <p id="loginMsg" style="color: red; text-align: center"></p>
-    </div>
-
-    <!-- Panel Administración -->
-    <div class="container" id="panel">
-      <h2>Panel de Administración</h2>
-      <button id="logoutBtn" style="background: #e74c3c">Cerrar sesión</button>
-
-      <div class="stat-card stat-card2">
-        <h3 id="totalVisitantes">0</h3>
-        <p>Visitantes</p>
+    <header>Panel de administración - Trollas. Inc.</header>
+    <main>
+      <!-- Login -->
+      <div id="loginForm">
+        <h2>Iniciar sesión</h2>
+        <input id="email" type="email" placeholder="Correo" />
+        <input id="password" type="password" placeholder="Contraseña" />
+        <button id="loginBtn">Entrar</button>
+        <p id="loginMsg"></p>
       </div>
 
-      <div class="stats">
-        <div class="stat-card">
-          <h3 id="totalClientes">0</h3>
-          <p>Clientes</p>
+      <!-- Panel -->
+      <div id="panel" class="hidden">
+        <button id="logoutBtn" style="background: crimson">
+          Cerrar sesión
+        </button>
+
+        <div class="section">
+          <h3>📊 Visitantes</h3>
+          <p id="contadorVisitantes">Cargando...</p>
         </div>
-        <div class="stat-card">
-          <h3 id="totalPremium">0</h3>
-          <p>Premium</p>
+
+        <div class="section">
+          <h3>👥 Clientes</h3>
+
+          <!-- Formulario cliente -->
+          <h4>Agregar / Editar Cliente</h4>
+          <input type="text" id="nombre" placeholder="Nombre" />
+          <input type="text" id="apellidos" placeholder="Apellidos" />
+          <input type="email" id="correo" placeholder="Correo" />
+          <input type="tel" id="telefono" placeholder="Teléfono" />
+          <input type="text" id="plan" placeholder="Plan" />
+          <textarea
+            id="info"
+            rows="3"
+            placeholder="Información adicional"></textarea>
+          <input type="file" id="fotoUpload" accept="image/*" />
+          <button id="addClientBtn">Guardar Cliente</button>
+
+          <!-- Tabla clientes -->
+          <table>
+            <thead>
+              <tr>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Plan</th>
+                <th>Info</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyClientes">
+              <tr>
+                <td colspan="8" style="text-align: center">
+                  Cargando clientes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h3>📰 Subir entrada al blog</h3>
+          <input id="blogTitulo" type="text" placeholder="Título" />
+          <textarea
+            id="blogContenido"
+            rows="5"
+            placeholder="Contenido (HTML permitido)"></textarea>
+          <input id="blogEnlace" type="text" placeholder="Enlace opcional" />
+          <button id="addBlogBtn">Publicar entrada</button>
+          <p id="blogMsg"></p>
+        </div>
+
+        <div class="section">
+          <h3>📈 Detalle de visitas</h3>
+          <button id="refreshVisitasBtn">🔄 Actualizar tabla</button>
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha y hora</th>
+                <th>Navegador</th>
+                <th>SO</th>
+                <th>Idioma</th>
+                <th>Resolución</th>
+                <th>Página</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyVisitas">
+              <tr>
+                <td colspan="6" style="text-align: center">
+                  Cargando visitas...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <h3>Agregar / Editar Cliente</h3>
-      <input type="text" id="nombre" placeholder="Nombre" />
-      <input type="text" id="apellidos" placeholder="Apellidos" />
-      <input type="email" id="correo" placeholder="Correo" />
-      <input type="tel" id="telefono" placeholder="Teléfono" />
-      <input type="text" id="plan" placeholder="Plan" />
-      <textarea
-        id="info"
-        rows="3"
-        placeholder="Información adicional"></textarea>
-      <input type="file" id="fotoUpload" accept="image/*" />
-      <button id="addClientBtn">Guardar Cliente</button>
-
-      <h3>Lista de Clientes</h3>
-      <div id="clientsList">
-        <div style="text-align: center; color: #7f8c8d">
-          No hay clientes aún
-        </div>
-      </div>
-      <h3>Agregar Entrada al Blog</h3>
-      <input type="text" id="blogTitulo" placeholder="Título" />
-      <textarea
-        id="blogContenido"
-        rows="5"
-        placeholder="Contenido (puedes usar HTML)"></textarea>
-      <input type="text" id="blogEnlace" placeholder="Enlace opcional" />
-      <button id="addBlogBtn">Publicar Entrada</button>
-      <div id="blogMsg" style="color: green; margin-top: 5px"></div>
-    </div>
+    </main>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
       import {
-        getAuth,
-        signInWithEmailAndPassword,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-      import {
         getFirestore,
         collection,
-        addDoc,
         getDocs,
+        addDoc,
         doc,
-        deleteDoc,
         updateDoc,
+        deleteDoc,
+        query,
+        orderBy,
+        limit,
         getDoc,
-        increment,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+      import {
+        getAuth,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-      // Configuración Firebase
+      // Config Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
         authDomain: "trollas-inc-administracion.firebaseapp.com",
@@ -190,17 +222,17 @@
       };
 
       const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
       const db = getFirestore(app);
+      const auth = getAuth(app);
 
-      // Elementos DOM
+      // Elementos
       const loginForm = document.getElementById("loginForm");
-      const panel = document.getElementById("panel");
-      const loginEmail = document.getElementById("loginEmail");
-      const loginPassword = document.getElementById("loginPassword");
       const loginBtn = document.getElementById("loginBtn");
-      const loginMsg = document.getElementById("loginMsg");
       const logoutBtn = document.getElementById("logoutBtn");
+      const panel = document.getElementById("panel");
+      const loginMsg = document.getElementById("loginMsg");
+      const tbodyClientes = document.getElementById("tbodyClientes");
+      const contadorVisitantes = document.getElementById("contadorVisitantes");
 
       const nombre = document.getElementById("nombre");
       const apellidos = document.getElementById("apellidos");
@@ -210,123 +242,78 @@
       const info = document.getElementById("info");
       const fotoUpload = document.getElementById("fotoUpload");
       const addClientBtn = document.getElementById("addClientBtn");
-      const clientsList = document.getElementById("clientsList");
-      const totalClientes = document.getElementById("totalClientes");
-      const totalPremium = document.getElementById("totalPremium");
-      const totalVisitantes = document.getElementById("totalVisitantes");
-
       let clientes = [];
       let editando = false;
       let clienteEditandoId = null;
       let imagenCliente = null;
 
-      // Login
+      // Login / Logout
       loginBtn.addEventListener("click", async () => {
         try {
           await signInWithEmailAndPassword(
             auth,
-            loginEmail.value,
-            loginPassword.value
+            document.getElementById("email").value,
+            document.getElementById("password").value
           );
         } catch (err) {
           loginMsg.textContent = err.message;
         }
       });
-
-      // Logout
       logoutBtn.addEventListener("click", () => signOut(auth));
 
-      // Mantener sesión activa
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           loginForm.style.display = "none";
-          panel.style.display = "block";
-
-          try {
-            await cargarClientes();
-          } catch (err) {
-            console.error("Error cargando clientes:", err);
-          }
-
-          try {
-            await cargarVisitantes();
-          } catch (err) {
-            console.error("Error cargando visitantes:", err);
-          }
+          panel.classList.remove("hidden");
+          await cargarClientes();
+          await cargarVisitantes();
+          await cargarVisitasDetalle();
         } else {
           loginForm.style.display = "block";
-          panel.style.display = "none";
-          limpiarFormulario();
-          clientes = [];
-          mostrarClientes();
-          actualizarEstadisticas();
+          panel.classList.add("hidden");
         }
       });
 
-      // Cargar clientes desde Firestore
+      // Cargar clientes
       async function cargarClientes() {
         try {
-          const snapshot = await getDocs(collection(db, "clientes"));
-          clientes = snapshot.docs.map((docSnap) => ({
+          const snap = await getDocs(collection(db, "clientes"));
+          clientes = snap.docs.map((docSnap) => ({
             id: docSnap.id,
             ...docSnap.data(),
           }));
           mostrarClientes();
-          actualizarEstadisticas();
         } catch (err) {
-          console.error("Error cargando clientes:", err);
-          clientsList.innerHTML = `<div style="text-align:center;color:red;">Error cargando clientes</div>`;
+          console.error(err);
+          tbodyClientes.innerHTML =
+            "<tr><td colspan='8' style='text-align:center;color:red'>Error cargando clientes</td></tr>";
         }
       }
 
-      async function cargarVisitantes() {
-        try {
-          const visitasRef = doc(db, "estadisticas", "visitas");
-          const visitasSnap = await getDoc(visitasRef);
-          if (visitasSnap.exists()) {
-            totalVisitantes.textContent = visitasSnap.data().contador || 0;
-          } else {
-            totalVisitantes.textContent = 0;
-          }
-        } catch (err) {
-          console.error("Error cargando visitantes:", err);
-          totalVisitantes.textContent = "Error";
+      // Mostrar clientes en tabla
+      function mostrarClientes() {
+        if (clientes.length === 0) {
+          tbodyClientes.innerHTML =
+            "<tr><td colspan='8' style='text-align:center'>No hay clientes</td></tr>";
+          return;
         }
+        tbodyClientes.innerHTML = "";
+        clientes.forEach((c) => {
+          tbodyClientes.innerHTML += `<tr>
+      <td>${c.foto ? `<img src="${c.foto}" class="imgPreview">` : "-"}</td>
+      <td>${c.nombre || ""}</td>
+      <td>${c.apellidos || ""}</td>
+      <td>${c.correo || ""}</td>
+      <td>${c.telefono || ""}</td>
+      <td>${c.plan || ""}</td>
+      <td>${c.info || ""}</td>
+      <td>
+        <button onclick="editarCliente('${c.id}')">Editar</button>
+        <button onclick="eliminarCliente('${c.id}')">Eliminar</button>
+      </td>
+    </tr>`;
+        });
       }
-      // Agregar / Editar cliente
-      addClientBtn.addEventListener("click", async () => {
-        if (!nombre.value || !apellidos.value || !correo.value)
-          return alert("Nombre, Apellidos y Correo son obligatorios");
-        const cliente = {
-          nombre: nombre.value,
-          apellidos: apellidos.value,
-          correo: correo.value,
-          telefono: telefono.value,
-          plan: plan.value,
-          info: info.value,
-          foto: imagenCliente || "",
-        };
-        if (editando) {
-          cliente.id = clienteEditandoId;
-          const docRef = doc(db, "clientes", cliente.id);
-          await updateDoc(docRef, cliente);
-          editando = false;
-          clienteEditandoId = null;
-          addClientBtn.textContent = "Guardar Cliente";
-        } else {
-          await addDoc(collection(db, "clientes"), cliente);
-        }
-        limpiarFormulario();
-        cargarClientes();
-      });
-
-      // Eliminar cliente
-      window.eliminarCliente = async function (id) {
-        if (confirm("Eliminar este cliente?")) {
-          await deleteDoc(doc(db, "clientes", id));
-          cargarClientes();
-        }
-      };
 
       // Editar cliente
       window.editarCliente = function (id) {
@@ -345,59 +332,53 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       };
 
-      // Mostrar clientes
-      function mostrarClientes() {
-        if (clientes.length === 0) {
-          clientsList.innerHTML = `<div style="text-align:center;color:#7f8c8d;">No hay clientes aún</div>`;
-          return;
+      // Eliminar cliente
+      window.eliminarCliente = async function (id) {
+        if (confirm("Eliminar este cliente?")) {
+          await deleteDoc(doc(db, "clientes", id));
+          cargarClientes();
         }
-        clientsList.innerHTML = "";
-        clientes.forEach((c) => {
-          const div = document.createElement("div");
-          div.className = "clientItem";
-          div.innerHTML = `
-      <div style="display:flex;align-items:center;">
-        ${
-          c.foto
-            ? `<img src="${c.foto}" class="imgPreview">`
-            : '<i class="fas fa-user fa-2x" style="margin-right:10px;"></i>'
-        }
-        <div>
-          <strong>${c.nombre} ${c.apellidos}</strong><br>
-          ${c.correo}<br>${c.telefono}<br>${c.plan}
-        </div>
-      </div>
-      <div>
-        <button onclick="editarCliente('${c.id}')">Editar</button>
-        <button onclick="eliminarCliente('${
-          c.id
-        }')" style="background:#e74c3c;">Eliminar</button>
-      </div>
-    `;
-          clientsList.appendChild(div);
-        });
-      }
+      };
 
-      // Estadísticas
-      function actualizarEstadisticas() {
-        totalClientes.textContent = clientes.length;
-        totalPremium.textContent = clientes.filter((c) =>
-          c.plan.toLowerCase().includes("premium")
-        ).length;
-      }
-
-      // Imagen
-      fotoUpload.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            imagenCliente = ev.target.result;
-          };
-          reader.readAsDataURL(file);
+      // Guardar / actualizar cliente
+      addClientBtn.addEventListener("click", async () => {
+        if (!nombre.value || !apellidos.value || !correo.value)
+          return alert("Nombre, Apellidos y Correo obligatorios");
+        const cliente = {
+          nombre: nombre.value,
+          apellidos: apellidos.value,
+          correo: correo.value,
+          telefono: telefono.value,
+          plan: plan.value,
+          info: info.value,
+          foto: imagenCliente || "",
+        };
+        if (editando) {
+          const docRef = doc(db, "clientes", clienteEditandoId);
+          await updateDoc(docRef, cliente);
+          editando = false;
+          clienteEditandoId = null;
+          addClientBtn.textContent = "Guardar Cliente";
+        } else {
+          await addDoc(collection(db, "clientes"), cliente);
         }
+        limpiarFormulario();
+        cargarClientes();
       });
 
+      // Cargar visitantes
+      async function cargarVisitantes() {
+        try {
+          const visitasSnap = await getDoc(doc(db, "estadisticas", "visitas"));
+          contadorVisitantes.textContent =
+            "Total visitantes: " + (visitasSnap.data()?.contador || 0);
+        } catch (err) {
+          contadorVisitantes.textContent = "Error";
+          console.error(err);
+        }
+      }
+
+      // Limpiar formulario
       function limpiarFormulario() {
         nombre.value = "";
         apellidos.value = "";
@@ -408,6 +389,17 @@
         fotoUpload.value = "";
         imagenCliente = null;
       }
+
+      // Imagen
+      fotoUpload.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (ev) => (imagenCliente = ev.target.result);
+          reader.readAsDataURL(file);
+        }
+      });
+
       // Blog
       const blogTitulo = document.getElementById("blogTitulo");
       const blogContenido = document.getElementById("blogContenido");
@@ -417,28 +409,69 @@
 
       addBlogBtn.addEventListener("click", async () => {
         if (!blogTitulo.value || !blogContenido.value) {
-          alert("Título y contenido son obligatorios");
+          alert("Título y contenido obligatorios");
           return;
         }
-
-        const nuevaEntrada = {
-          titulo: blogTitulo.value,
-          contenido: blogContenido.value,
-          fecha: new Date().toISOString(),
-          enlace: blogEnlace.value || "",
-        };
-
         try {
-          await addDoc(collection(db, "blog"), nuevaEntrada);
-          blogMsg.textContent = "Entrada publicada correctamente ✅";
+          await addDoc(collection(db, "blog"), {
+            titulo: blogTitulo.value,
+            contenido: blogContenido.value,
+            fecha: new Date().toISOString(),
+            enlace: blogEnlace.value || "",
+          });
+          blogMsg.textContent = "Entrada publicada ✅";
           blogTitulo.value = "";
           blogContenido.value = "";
           blogEnlace.value = "";
         } catch (err) {
-          console.error("Error publicando entrada:", err);
-          blogMsg.textContent = "Error al publicar la entrada ❌";
+          console.error(err);
+          blogMsg.textContent = "Error al publicar ❌";
         }
       });
+
+      // Detalle visitas
+      const tbodyVisitas = document.getElementById("tbodyVisitas");
+      async function cargarVisitasDetalle() {
+        tbodyVisitas.innerHTML =
+          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+        try {
+          const q = query(
+            collection(db, "visitas_detalle"),
+            orderBy("timestamp", "desc"),
+            limit(50)
+          );
+          const snap = await getDocs(q);
+          if (snap.empty) {
+            tbodyVisitas.innerHTML =
+              "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
+            return;
+          }
+          tbodyVisitas.innerHTML = "";
+          snap.forEach((docSnap) => {
+            const d = docSnap.data();
+            const fecha = new Date(d.timestamp).toLocaleString();
+            const navegador = d.userAgent || "—";
+            const so = d.platform || "—";
+            const idioma = d.language || "—";
+            const resolucion =
+              d.screenWidth && d.screenHeight
+                ? `${d.screenWidth}x${d.screenHeight}`
+                : "—";
+            const pagina = d.page || "/";
+            tbodyVisitas.innerHTML += `<tr>
+        <td>${fecha}</td><td>${navegador}</td><td>${so}</td>
+        <td>${idioma}</td><td>${resolucion}</td><td>${pagina}</td>
+      </tr>`;
+          });
+        } catch (err) {
+          console.error(err);
+          tbodyVisitas.innerHTML =
+            "<tr><td colspan='6'>Error cargando visitas</td></tr>";
+        }
+      }
+      document
+        .getElementById("refreshVisitasBtn")
+        .addEventListener("click", cargarVisitasDetalle);
     </script>
   </body>
 </html>
