@@ -190,13 +190,14 @@
                 <th>Navegador</th>
                 <th>SO</th>
                 <th>Idioma</th>
-                <th>Resolución</th>
+                <th>IP</th>
+                <th>Ciudad</th>
                 <th>Página</th>
               </tr>
             </thead>
             <tbody id="tbodyVisitas">
               <tr>
-                <td colspan="6" style="text-align: center">
+                <td colspan="7" style="text-align: center">
                   Cargando visitas...
                 </td>
               </tr>
@@ -493,7 +494,7 @@
 
       async function cargarVisitasDetalle() {
         tbodyVisitas.innerHTML =
-          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+          "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
         try {
           const q = query(
             collection(db, "visitas_detalle"),
@@ -504,7 +505,7 @@
 
           if (snap.empty) {
             tbodyVisitas.innerHTML =
-              "<tr><td colspan='6'>No hay visitas registradas</td></tr>";
+              "<tr><td colspan='7' style='text-align:center'>No hay visitas registradas</td></tr>";
             return;
           }
 
@@ -517,7 +518,8 @@
             const navegador = d.navegador || "—";
             const so = d.so || "—";
             const idioma = d.idioma || "—";
-            const resolucion = d.resolucion || "—";
+            const ip = d.ip || "—";
+            const ciudad = d.ciudad || "—";
             const pagina = d.page || "/";
 
             tbodyVisitas.innerHTML += `<tr>
@@ -525,14 +527,15 @@
         <td>${navegador}</td>
         <td>${so}</td>
         <td>${idioma}</td>
-        <td>${resolucion}</td>
+        <td>${ip}</td>
+        <td>${ciudad}</td>
         <td>${pagina}</td>
       </tr>`;
           });
         } catch (err) {
           console.error(err);
           tbodyVisitas.innerHTML =
-            "<tr><td colspan='6'>Error cargando visitas</td></tr>";
+            "<tr><td colspan='7' style='text-align:center'>Error cargando visitas</td></tr>";
         }
       }
 
