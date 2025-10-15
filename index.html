@@ -380,14 +380,12 @@
         appId: "1:247309275509:web:33d62925b18474b2ac833c",
         measurementId: "G-G2T4HD22YH",
       };
-
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      // Función para contar visita solo una vez por dispositivo
+      // Contar visita solo una vez por dispositivo
       async function contarVisitaUnaVez() {
         const yaVisito = localStorage.getItem("yaVisito");
-
         if (yaVisito) return;
 
         const visitasRef = doc(db, "estadisticas", "visitas");
@@ -402,11 +400,9 @@
         localStorage.setItem("yaVisito", "true");
       }
 
-      contarVisitaUnaVez();
-
+      // Info del dispositivo
       function obtenerInfoDispositivo() {
         const ua = navigator.userAgent || "";
-
         let so = "Desconocido";
         if (/Android/i.test(ua)) so = "Android";
         else if (/iPhone|iPad|iPod/i.test(ua)) so = "iOS";
@@ -442,6 +438,7 @@
         };
       }
 
+      // Generar ID único por visitante
       function obtenerVisitanteID() {
         let id = localStorage.getItem("visitanteID");
         if (!id) {
@@ -457,6 +454,7 @@
         return id;
       }
 
+      // Obtener IP
       async function obtenerIP() {
         try {
           const res = await fetch("https://ipapi.co/json/");
@@ -472,18 +470,20 @@
         }
       }
 
+      // Registrar visita detallada
       async function registrarVisitaDetalle() {
         try {
+          await contarVisitaUnaVez();
           const info = obtenerInfoDispositivo();
           const ipInfo = await obtenerIP();
           const infoCompleta = { ...info, ...ipInfo };
-
           await addDoc(collection(db, "visitas_detalle"), infoCompleta);
         } catch (err) {
           console.error("Error registrando visita detalle:", err);
         }
       }
 
+      // Ejecutar
       registrarVisitaDetalle();
     </script>
   </body>
