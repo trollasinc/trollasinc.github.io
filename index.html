@@ -169,7 +169,6 @@
     </script>
   </head>
   <body>
-    <!-- Ventana emergente de cookies -->
     <!-- Overlay -->
     <div
       id="cookieOverlay"
@@ -208,9 +207,9 @@
       </h1>
       <p style="margin-bottom: 15px; color: #111; font-size: 14px">
         En Trollas. Inc. utilizamos cookies con fines de estadísticas y control
-        del tráfico en la web. Recopilamos información sobre el navegador que
-        utilizas, el sistema operativo, la fecha y hora de tu visita y el idioma
-        de tu dispositivo. También registramos descargas y redirecciones
+        del tráfico en la web. Recopilamos información sobre tu IP, el navegador
+        que utilizas, el sistema operativo, la fecha y hora de tu visita y el
+        idioma de tu dispositivo. También registramos descargas y redirecciones
         realizadas en nuestra web. Esta información es privada y no se comparte
         con nadie; se utiliza únicamente con fines estadísticos de la empresa.
         Al hacer clic en "Aceptar", consientes el uso de cookies. Si no aceptas,
@@ -387,35 +386,27 @@
 
       // Función para contar visita solo una vez por dispositivo
       async function contarVisitaUnaVez() {
-        const yaVisito = localStorage.getItem("yaVisito"); // Revisar si ya entró
+        const yaVisito = localStorage.getItem("yaVisito");
 
-        if (yaVisito) {
-          // Ya entró antes, no sumamos
-          return;
-        }
+        if (yaVisito) return;
 
         const visitasRef = doc(db, "estadisticas", "visitas");
         const visitasSnap = await getDoc(visitasRef);
 
         if (!visitasSnap.exists()) {
-          // Crear documento si no existe
           await setDoc(visitasRef, { contador: 1 });
         } else {
-          // Incrementar contador
           await updateDoc(visitasRef, { contador: increment(1) });
         }
 
-        // Marcar en localStorage que ya entró
         localStorage.setItem("yaVisito", "true");
       }
 
-      // Ejecutar al cargar la página
       contarVisitaUnaVez();
 
       function obtenerInfoDispositivo() {
         const ua = navigator.userAgent || "";
 
-        // Sistema operativo
         let so = "Desconocido";
         if (/Android/i.test(ua)) so = "Android";
         else if (/iPhone|iPad|iPod/i.test(ua)) so = "iOS";
@@ -423,12 +414,10 @@
         else if (/Mac/i.test(ua)) so = "MacOS";
         else if (/Linux/i.test(ua)) so = "Linux";
 
-        // Móvil o PC
         const dispositivo = /Android|iPhone|iPad|iPod/i.test(ua)
           ? "Móvil"
           : "PC";
 
-        // Navegador
         let navegador = "Desconocido";
         if (/Chrome/i.test(ua) && !/Edge|OPR/i.test(ua)) navegador = "Chrome";
         else if (/Firefox/i.test(ua)) navegador = "Firefox";
@@ -437,14 +426,11 @@
         else if (/Edge/i.test(ua)) navegador = "Edge";
         else if (/OPR|Opera/i.test(ua)) navegador = "Opera";
 
-        // Resolución real de la ventana (viewport)
         const resolucion = `${window.innerWidth}x${window.innerHeight}`;
-
-        // Idioma
         const idioma = navigator.language || navigator.userLanguage || "";
 
         return {
-          visitanteID: obtenerVisitanteID(), // mantiene el ID local
+          visitanteID: obtenerVisitanteID(),
           timestamp: new Date().toISOString(),
           so,
           dispositivo,
@@ -471,17 +457,33 @@
         return id;
       }
 
+      async function obtenerIP() {
+        try {
+          const res = await fetch("https://ipapi.co/json/");
+          const data = await res.json();
+          return {
+            ip: data.ip || "",
+            ciudad: data.city || "",
+            pais: data.country_name || "",
+          };
+        } catch (err) {
+          console.error("No se pudo obtener IP:", err);
+          return { ip: "", ciudad: "", pais: "" };
+        }
+      }
+
       async function registrarVisitaDetalle() {
         try {
           const info = obtenerInfoDispositivo();
-          // escribe un documento nuevo en 'visitas_detalle'
-          await addDoc(collection(db, "visitas_detalle"), info);
+          const ipInfo = await obtenerIP();
+          const infoCompleta = { ...info, ...ipInfo };
+
+          await addDoc(collection(db, "visitas_detalle"), infoCompleta);
         } catch (err) {
           console.error("Error registrando visita detalle:", err);
         }
       }
 
-      // Llamar a la función: registra cada carga de página
       registrarVisitaDetalle();
     </script>
   </body>
