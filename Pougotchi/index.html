@@ -90,6 +90,35 @@
         color: #555;
       }
     </style>
+    <style>
+      /* Estilos básicos del popup */
+      #emailModal {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      #emailModalContent {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        width: 300px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      #emailModal input[type="email"] {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #emailModal button {
+        padding: 10px 20px;
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -98,7 +127,25 @@
         <a href="../index.html">⬅️ Volver ⬅️</a>
       </nav>
     </header>
-
+    <div id="emailModal">
+      <div id="emailModalContent">
+        <h2>Introduce tu correo para continuar</h2>
+        <br />
+        <p>
+          Para acceder a ciertas funciones en la web como descargar videojuegos,
+          juegos online o leer las noticias del blog deberás iniciar sesión con
+          tu correo electrónico
+        </p>
+        <br />
+        <input
+          type="email"
+          id="userEmail"
+          placeholder="correo@ejemplo.com"
+          required />
+        <br />
+        <button id="submitEmail">Enviar</button>
+      </div>
+    </div>
     <main>
       <div class="game-container">
         <img src="../Logos/Pougotchi.png" alt="Balancea! Balancea!" />
@@ -237,6 +284,43 @@
 
       // Ejecutar
       registrarVisitaDetalle();
+      // --- Popup y LocalStorage ---
+      const modal = document.getElementById("emailModal");
+      const submitBtn = document.getElementById("submitEmail");
+      const emailInput = document.getElementById("userEmail");
+
+      // Si no hay correo en localStorage, mostrar modal
+      if (!localStorage.getItem("correoGuardado")) {
+        modal.style.display = "block";
+      }
+
+      submitBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (email && /\S+@\S+\.\S+/.test(email)) {
+          try {
+            // Guardar en Firestore
+            await addDoc(collection(db, "correos"), {
+              correo: email,
+              fecha: new Date(),
+            });
+            // Guardar en localStorage
+            localStorage.setItem("correoGuardado", "true");
+            // Ocultar modal
+            modal.style.display = "none";
+          } catch (error) {
+            alert("Error al enviar el correo: " + error);
+          }
+        } else {
+          alert("Por favor, introduce un correo válido.");
+        }
+      });
+
+      // Opcional: evitar cerrar modal con clic fuera
+      window.addEventListener("click", (e) => {
+        if (e.target == modal) {
+          e.preventDefault();
+        }
+      });
     </script>
   </body>
 </html>

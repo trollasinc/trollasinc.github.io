@@ -29,10 +29,10 @@
         z-index: 100;
       }
       main {
-        max-width: 1000px;
+        max-width: 1200px;
         margin: 2rem auto;
         background: white;
-        padding: 2rem;
+        padding: 1.5rem;
         border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       }
@@ -62,6 +62,8 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 1rem;
+        table-layout: fixed;
+        word-wrap: break-word;
       }
       th,
       td {
@@ -78,6 +80,9 @@
         border-top: 1px solid #ccc;
         padding-top: 1rem;
       }
+      .table-container {
+        overflow-x: auto;
+      }
       .imgPreview {
         width: 40px;
         height: 40px;
@@ -90,10 +95,29 @@
         display: flex;
         justify-content: center;
         gap: 2rem;
+        flex-wrap: wrap;
       }
       .navbar-admin a {
         color: black;
         text-decoration: none;
+        font-weight: 500;
+      }
+      @media (max-width: 768px) {
+        main {
+          margin: 1rem;
+          padding: 1rem;
+        }
+        th,
+        td {
+          font-size: 14px;
+          padding: 6px;
+        }
+        button,
+        input,
+        textarea {
+          font-size: 14px;
+          padding: 8px;
+        }
       }
     </style>
   </head>
@@ -119,18 +143,18 @@
           <a href="#clientes">Clientes</a>
           <a href="#blog">Blog</a>
           <a href="#detalle-de-visitas">Detalle de visitas</a>
-          <!--<a href="#tbodyRedirecciones">Registro de redirecciones</a>
-          <a href="#germanySection">Germany_18 Estadísticas</a>-->
+          <a href="#correos">Correos</a>
         </div>
+
+        <!-- Visitantes -->
         <div id="visitantes" class="section">
           <h3>📊 Visitantes</h3>
           <p id="contadorVisitantes">Cargando...</p>
         </div>
 
+        <!-- Clientes -->
         <div id="clientes" class="section">
           <h3>👥 Clientes</h3>
-
-          <!-- Formulario cliente -->
           <h4>Agregar / Editar Cliente</h4>
           <input type="text" id="nombre" placeholder="Nombre" />
           <input type="text" id="apellidos" placeholder="Apellidos" />
@@ -144,30 +168,32 @@
           <input type="file" id="fotoUpload" accept="image/*" />
           <button id="addClientBtn">Guardar Cliente</button>
 
-          <!-- Tabla clientes -->
-          <table>
-            <thead>
-              <tr>
-                <th>Foto</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Correo</th>
-                <th>Teléfono</th>
-                <th>Plan</th>
-                <th>Info</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyClientes">
-              <tr>
-                <td colspan="8" style="text-align: center">
-                  Cargando clientes...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Plan</th>
+                  <th>Info</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyClientes">
+                <tr>
+                  <td colspan="8" style="text-align: center">
+                    Cargando clientes...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
+        <!-- Blog -->
         <div id="blog" class="section">
           <h3>📰 Subir entrada al blog</h3>
           <input id="blogTitulo" type="text" placeholder="Título" />
@@ -180,69 +206,63 @@
           <p id="blogMsg"></p>
         </div>
 
+        <!-- Detalle de visitas -->
         <div id="detalle-de-visitas" class="section">
           <h3>📈 Detalle de visitas</h3>
-          <button id="refreshVisitasBtn">🔄 Actualizar tabla</button>
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha y hora</th>
-                <th>Navegador</th>
-                <th>SO</th>
-                <th>Idioma</th>
-                <th>IP</th>
-                <th>Ciudad</th>
-                <th>Página</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyVisitas">
-              <tr>
-                <td colspan="7" style="text-align: center">
-                  Cargando visitas...
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <input type="text" id="buscarIP" placeholder="Buscar por IP..." />
+          <button id="btnBuscarIP">Buscar</button>
+          <button id="refreshVisitasBtn">🔄 Refrescar</button>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Fecha y hora</th>
+                  <th>Navegador</th>
+                  <th>SO</th>
+                  <th>Idioma</th>
+                  <th>IP</th>
+                  <th>Ciudad</th>
+                  <th>Página</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyVisitas">
+                <tr>
+                  <td colspan="7" style="text-align: center">
+                    Cargando visitas...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <!--<h2>📎 Registro de Redirecciones</h2>
-        <button id="refreshRedirBtn">🔄 Actualizar</button>
-        <table border="1" cellspacing="0" cellpadding="6">
-          <thead>
-            <tr>
-              <th>Fecha y hora</th>
-              <th>Navegador</th>
-              <th>SO</th>
-              <th>Idioma</th>
-              <th>Resolución</th>
-              <th>Origen</th>
-              <th>Destino</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyRedirecciones">
-            <tr><td colspan="7" style="text-align: center">Cargando...</td></tr>
-          </tbody>
-        </table>
-        <div id="germanySection" class="section">
-          <h3>📊 Estadísticas Germany 18</h3>
-          <button id="refreshGermany18Btn">🔄 Actualizar</button>
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha y hora</th>
-                <th>Navegador</th>
-                <th>SO</th>
-                <th>Idioma</th>
-                <th>Resolución</th>
-                <th>Página</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyGermany18">
-              <tr>
-                <td colspan="6" style="text-align: center">Cargando...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>-->
+
+        <!-- Correos -->
+        <div id="correos" class="section">
+          <h3>📧 Correos registrados</h3>
+          <input
+            type="text"
+            id="buscarCorreo"
+            placeholder="Buscar por correo..." />
+          <button id="btnBuscarCorreo">Buscar</button>
+          <button id="btnRefreshCorreos">🔄 Refrescar</button>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Correo</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyCorreos">
+                <tr>
+                  <td colspan="2" style="text-align: center">Cargando...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -252,6 +272,7 @@
         getFirestore,
         collection,
         getDocs,
+        getDoc,
         addDoc,
         doc,
         updateDoc,
@@ -259,7 +280,6 @@
         query,
         orderBy,
         limit,
-        getDoc,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
       import {
         getAuth,
@@ -268,7 +288,7 @@
         onAuthStateChanged,
       } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
-      // Config Firebase
+      // --- Configuración Firebase ---
       const firebaseConfig = {
         apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
         authDomain: "trollas-inc-administracion.firebaseapp.com",
@@ -278,19 +298,16 @@
         appId: "1:247309275509:web:33d62925b18474b2ac833c",
         measurementId: "G-G2T4HD22YH",
       };
-
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const auth = getAuth(app);
 
-      // Elementos
+      // --- Elementos ---
       const loginForm = document.getElementById("loginForm");
       const loginBtn = document.getElementById("loginBtn");
       const logoutBtn = document.getElementById("logoutBtn");
       const panel = document.getElementById("panel");
       const loginMsg = document.getElementById("loginMsg");
-      const tbodyClientes = document.getElementById("tbodyClientes");
-      const contadorVisitantes = document.getElementById("contadorVisitantes");
 
       const nombre = document.getElementById("nombre");
       const apellidos = document.getElementById("apellidos");
@@ -300,12 +317,15 @@
       const info = document.getElementById("info");
       const fotoUpload = document.getElementById("fotoUpload");
       const addClientBtn = document.getElementById("addClientBtn");
+      const tbodyClientes = document.getElementById("tbodyClientes");
+      const contadorVisitantes = document.getElementById("contadorVisitantes");
+
       let clientes = [];
       let editando = false;
       let clienteEditandoId = null;
       let imagenCliente = null;
 
-      // Login / Logout
+      // --- Login ---
       loginBtn.addEventListener("click", async () => {
         try {
           await signInWithEmailAndPassword(
@@ -317,6 +337,7 @@
           loginMsg.textContent = err.message;
         }
       });
+
       logoutBtn.addEventListener("click", () => signOut(auth));
 
       onAuthStateChanged(auth, async (user) => {
@@ -326,15 +347,14 @@
           await cargarClientes();
           await cargarVisitantes();
           await cargarVisitasDetalle();
-          await cargarRedirecciones();
-          await cargarVisitasGermany18();
+          await cargarCorreos();
         } else {
           loginForm.style.display = "block";
           panel.classList.add("hidden");
         }
       });
 
-      // Cargar clientes
+      // --- Clientes ---
       async function cargarClientes() {
         try {
           const snap = await getDocs(collection(db, "clientes"));
@@ -350,7 +370,6 @@
         }
       }
 
-      // Mostrar clientes en tabla
       function mostrarClientes() {
         if (clientes.length === 0) {
           tbodyClientes.innerHTML =
@@ -375,7 +394,6 @@
         });
       }
 
-      // Editar cliente
       window.editarCliente = function (id) {
         const c = clientes.find((cl) => cl.id === id);
         if (!c) return;
@@ -392,7 +410,6 @@
         window.scrollTo({ top: 0, behavior: "smooth" });
       };
 
-      // Eliminar cliente
       window.eliminarCliente = async function (id) {
         if (confirm("Eliminar este cliente?")) {
           await deleteDoc(doc(db, "clientes", id));
@@ -400,7 +417,6 @@
         }
       };
 
-      // Guardar / actualizar cliente
       addClientBtn.addEventListener("click", async () => {
         if (!nombre.value || !apellidos.value || !correo.value)
           return alert("Nombre, Apellidos y Correo obligatorios");
@@ -426,19 +442,6 @@
         cargarClientes();
       });
 
-      // Cargar visitantes
-      async function cargarVisitantes() {
-        try {
-          const visitasSnap = await getDoc(doc(db, "estadisticas", "visitas"));
-          contadorVisitantes.textContent =
-            "Total visitantes: " + (visitasSnap.data()?.contador || 0);
-        } catch (err) {
-          contadorVisitantes.textContent = "Error";
-          console.error(err);
-        }
-      }
-
-      // Limpiar formulario
       function limpiarFormulario() {
         nombre.value = "";
         apellidos.value = "";
@@ -450,7 +453,6 @@
         imagenCliente = null;
       }
 
-      // Imagen
       fotoUpload.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -460,41 +462,28 @@
         }
       });
 
-      // Blog
-      const blogTitulo = document.getElementById("blogTitulo");
-      const blogContenido = document.getElementById("blogContenido");
-      const blogEnlace = document.getElementById("blogEnlace");
-      const addBlogBtn = document.getElementById("addBlogBtn");
-      const blogMsg = document.getElementById("blogMsg");
-
-      addBlogBtn.addEventListener("click", async () => {
-        if (!blogTitulo.value || !blogContenido.value) {
-          alert("Título y contenido obligatorios");
-          return;
-        }
+      // --- Visitantes ---
+      async function cargarVisitantes() {
         try {
-          await addDoc(collection(db, "blog"), {
-            titulo: blogTitulo.value,
-            contenido: blogContenido.value,
-            fecha: new Date().toISOString(),
-            enlace: blogEnlace.value || "",
-          });
-          blogMsg.textContent = "Entrada publicada ✅";
-          blogTitulo.value = "";
-          blogContenido.value = "";
-          blogEnlace.value = "";
+          // Obtenemos el documento "visitas" de la colección "estadisticas"
+          const visitasSnap = await getDoc(doc(db, "estadisticas", "visitas"));
+          const contador = visitasSnap.exists()
+            ? visitasSnap.data().contador
+            : 0;
+          contadorVisitantes.textContent = "Total visitantes: " + contador;
         } catch (err) {
+          contadorVisitantes.textContent = "Error cargando visitantes";
           console.error(err);
-          blogMsg.textContent = "Error al publicar ❌";
         }
-      });
+      }
 
-      // Detalle visitas
+      // --- Detalle visitas ---
       const tbodyVisitas = document.getElementById("tbodyVisitas");
-
-      async function cargarVisitasDetalle() {
+      async function cargarVisitasDetalle(filtroIP = "") {
+        const tbodyVisitas = document.getElementById("tbodyVisitas");
         tbodyVisitas.innerHTML =
           "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
+
         try {
           const q = query(
             collection(db, "visitas_detalle"),
@@ -512,13 +501,17 @@
           tbodyVisitas.innerHTML = "";
           snap.forEach((docSnap) => {
             const d = docSnap.data();
+            const ip = d.ip || "—";
+
+            // Filtrar por IP si se proporcionó
+            if (filtroIP && !ip.includes(filtroIP)) return;
+
             const fecha = d.timestamp
               ? new Date(d.timestamp).toLocaleString()
               : "—";
             const navegador = d.navegador || "—";
             const so = d.so || "—";
             const idioma = d.idioma || "—";
-            const ip = d.ip || "—";
             const ciudad = d.ciudad || "—";
             const pagina = d.page || "/";
 
@@ -538,170 +531,73 @@
             "<tr><td colspan='7' style='text-align:center'>Error cargando visitas</td></tr>";
         }
       }
+      document.getElementById("btnBuscarIP").addEventListener("click", () => {
+        const ip = document.getElementById("buscarIP").value.trim();
+        cargarVisitasDetalle(ip); // filtra por la IP ingresada
+      });
 
-      // Llama a la función al cargar la página
-      cargarVisitasDetalle();
-
-      // Botón para refrescar
       document
         .getElementById("refreshVisitasBtn")
-        ?.addEventListener("click", cargarVisitasDetalle);
+        .addEventListener("click", () => cargarVisitasDetalle());
 
-      const tbodyRedirecciones = document.getElementById("tbodyRedirecciones");
-
-      async function cargarRedirecciones() {
-        tbodyRedirecciones.innerHTML =
-          "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
-        try {
-          const q = query(
-            collection(db, "redirecciones"),
-            orderBy("timestamp", "desc"),
-            limit(50)
-          );
-          const snap = await getDocs(q);
-          if (snap.empty) {
-            tbodyRedirecciones.innerHTML =
-              "<tr><td colspan='7' style='text-align:center'>No hay redirecciones registradas</td></tr>";
-            return;
-          }
-
-          tbodyRedirecciones.innerHTML = "";
-          snap.forEach((docSnap) => {
-            const d = docSnap.data();
-            const fecha = new Date(d.timestamp).toLocaleString();
-            function detectarNavegador(ua) {
-              if (!ua) return "—";
-              if (ua.includes("Firefox")) return "Firefox";
-              if (ua.includes("Edg")) return "Edge";
-              if (ua.includes("Chrome")) return "Chrome";
-              if (ua.includes("Safari") && !ua.includes("Chrome"))
-                return "Safari";
-              if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
-              return "Desconocido";
-            }
-
-            function detectarSO(ua) {
-              if (!ua) return "—";
-              if (ua.includes("Windows")) return "Windows";
-              if (ua.includes("Android")) return "Android";
-              if (ua.includes("iPhone") || ua.includes("iPad")) return "iOS";
-              if (ua.includes("Mac OS")) return "macOS";
-              if (ua.includes("Linux")) return "Linux";
-              return "Desconocido";
-            }
-
-            const navegador = detectarNavegador(d.userAgent);
-            const so = detectarSO(d.userAgent);
-            const idioma = d.language || "—";
-            const resolucion =
-              d.screenWidth && d.screenHeight
-                ? `${d.screenWidth}x${d.screenHeight}`
-                : "—";
-            const origen = d.origen || "/";
-            const destino = d.destino || "—";
-
-            tbodyRedirecciones.innerHTML += `
-        <tr>
-          <td>${fecha}</td>
-          <td>${navegador}</td>
-          <td>${so}</td>
-          <td>${idioma}</td>
-          <td>${resolucion}</td>
-          <td>${origen}</td>
-          <td>${destino}</td>
-        </tr>`;
-          });
-        } catch (err) {
-          console.error(err);
-          tbodyRedirecciones.innerHTML =
-            "<tr><td colspan='7' style='text-align:center'>Error cargando redirecciones</td></tr>";
-        }
-      }
-
-      document
-        .getElementById("refreshRedirBtn")
-        .addEventListener("click", cargarRedirecciones);
-
-      async function cargarVisitasGermany18() {
-        const tbodyGermany = document.getElementById("tbodyGermany18");
-        tbodyGermany.innerHTML =
-          "<tr><td colspan='6' style='text-align:center'>Cargando...</td></tr>";
+      // --- Correos ---
+      async function cargarCorreos(filtroCorreo = "") {
+        const tableBody = document.getElementById("tbodyCorreos"); // Asegúrate de tener <tbody id="tbodyCorreos">
+        tableBody.innerHTML =
+          "<tr><td colspan='2' style='text-align:center'>Cargando...</td></tr>";
 
         try {
           const q = query(
-            collection(db, "germany_18_estadisticas"),
-            orderBy("timestamp", "desc"),
-            limit(50)
+            collection(db, "correos"),
+            orderBy("fecha", "desc"),
+            limit(100) // ajusta según necesites
           );
           const snap = await getDocs(q);
 
           if (snap.empty) {
-            tbodyGermany.innerHTML =
-              "<tr><td colspan='6' style='text-align:center'>No hay visitas registradas</td></tr>";
+            tableBody.innerHTML =
+              "<tr><td colspan='2' style='text-align:center'>No hay correos registrados</td></tr>";
             return;
           }
 
-          tbodyGermany.innerHTML = "";
+          tableBody.innerHTML = "";
           snap.forEach((docSnap) => {
-            const d = docSnap.data();
-            const ua = d.userAgent || "";
+            const data = docSnap.data();
+            const correo = data.correo || "";
 
-            function detectarNavegador(ua) {
-              if (!ua) return "—";
-              if (ua.includes("Firefox")) return "Firefox";
-              if (ua.includes("Edg")) return "Edge";
-              if (ua.includes("Chrome")) return "Chrome";
-              if (ua.includes("Safari") && !ua.includes("Chrome"))
-                return "Safari";
-              if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
-              return "Desconocido";
-            }
+            // Filtrar por correo si se proporciona
+            if (filtroCorreo && !correo.includes(filtroCorreo)) return;
 
-            function detectarSO(ua) {
-              if (!ua) return "—";
-              if (ua.includes("Windows")) return "Windows";
-              if (ua.includes("Android")) return "Android";
-              if (ua.includes("iPhone") || ua.includes("iPad")) return "iOS";
-              if (ua.includes("Mac OS")) return "macOS";
-              if (ua.includes("Linux")) return "Linux";
-              return "Desconocido";
-            }
-
-            const navegador = detectarNavegador(ua);
-            const so = detectarSO(ua);
-            const fecha = d.timestamp
-              ? new Date(d.timestamp).toLocaleString()
+            const fecha = data.fecha?.toDate
+              ? data.fecha.toDate().toLocaleString()
               : "—";
-            const idioma = d.language || "—";
-            const resolucion =
-              d.screenWidth && d.screenHeight
-                ? `${d.screenWidth}x${d.screenHeight}`
-                : "—";
-            const pagina = d.page || "/";
 
-            tbodyGermany.innerHTML += `<tr>
+            tableBody.innerHTML += `<tr>
+        <td>${correo}</td>
         <td>${fecha}</td>
-        <td>${navegador}</td>
-        <td>${so}</td>
-        <td>${idioma}</td>
-        <td>${resolucion}</td>
-        <td>${pagina}</td>
       </tr>`;
           });
         } catch (err) {
           console.error(err);
-          tbodyGermany.innerHTML =
-            "<tr><td colspan='6' style='text-align:center'>Error cargando visitas</td></tr>";
+          tableBody.innerHTML =
+            "<tr><td colspan='2' style='text-align:center'>Error cargando correos</td></tr>";
         }
       }
 
-      // Llamar a la función al cargar la página
-      cargarVisitasGermany18();
-
-      // Botón para refrescar
+      // Buscar correo
       document
-        .getElementById("refreshGermany18Btn")
-        ?.addEventListener("click", cargarVisitasGermany18);
+        .getElementById("btnBuscarCorreo")
+        .addEventListener("click", () => {
+          const filtro = document.getElementById("buscarCorreo").value.trim();
+          cargarCorreos(filtro);
+        });
+
+      // Refrescar todos
+      document
+        .getElementById("btnRefreshCorreos")
+        .addEventListener("click", () => {
+          cargarCorreos(); // sin filtro
+        });
     </script>
   </body>
 </html>
