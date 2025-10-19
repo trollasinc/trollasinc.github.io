@@ -4,22 +4,20 @@
     <meta charset="UTF-8" />
     <title>Redirigiendo...</title>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script type="module" src="../../ip-security.js"></script>
     <style>
       body {
         font-family: Arial, sans-serif;
         text-align: center;
         margin-top: 50px;
       }
-
       form {
         display: inline-block;
       }
-
       .g-recaptcha {
         display: block;
         margin: 0 auto;
       }
-
       button {
         padding: 10px 20px;
         font-size: 16px;
@@ -39,61 +37,12 @@
       <button type="submit">Continuar</button>
     </form>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+    <script>
+      const DESTINO = "../../Balancea/Download"; // Cambia esto a tu URL
 
-      // 🔧 Tu configuración de Firebase
-      const firebaseConfig = {
-        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
-        authDomain: "trollas-inc-administracion.firebaseapp.com",
-        projectId: "trollas-inc-administracion",
-        storageBucket: "trollas-inc-administracion.firebasestorage.app",
-        messagingSenderId: "247309275509",
-        appId: "1:247309275509:web:33d62925b18474b2ac833c",
-        measurementId: "G-G2T4HD22YH",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      const DESTINO = "../../Balancea/Download/"; // Cambia a tu destino real
-
-      // --- Funciones auxiliares ---
-      function obtenerInfoDispositivo() {
-        return {
-          userAgent: navigator.userAgent || "",
-          platform: navigator.platform || "",
-          language: navigator.language || "",
-          screenWidth: window.screen?.width || null,
-          screenHeight: window.screen?.height || null,
-          page: location.pathname + location.search || "",
-        };
-      }
-
-      async function registrarRedireccion(destino) {
-        try {
-          const info = obtenerInfoDispositivo();
-          const registro = {
-            destino: destino,
-            timestamp: new Date().toISOString(),
-            ...info,
-          };
-          await addDoc(collection(db, "redirecciones"), registro);
-          console.log("✅ Redirección registrada");
-        } catch (err) {
-          console.error("Error registrando redirección:", err);
-        }
-      }
-
-      // --- Lógica del CAPTCHA y redirección ---
       document
         .getElementById("redirectForm")
-        .addEventListener("submit", async function (e) {
+        .addEventListener("submit", function (e) {
           e.preventDefault();
           const response = grecaptcha.getResponse();
 
@@ -102,143 +51,11 @@
             return;
           }
 
-          // Registrar redirección antes de salir
-          await registrarRedireccion(DESTINO);
-
-          // Redirigir tras un breve delay (por seguridad)
+          // Redirigir tras un breve delay
           setTimeout(() => {
             window.location.href = DESTINO;
           }, 800);
         });
-    </script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-      import {
-        getFirestore,
-        doc,
-        getDoc,
-        setDoc,
-        updateDoc,
-        increment,
-        collection,
-        addDoc,
-      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-
-      // Config Firebase
-      const firebaseConfig = {
-        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
-        authDomain: "trollas-inc-administracion.firebaseapp.com",
-        projectId: "trollas-inc-administracion",
-        storageBucket: "trollas-inc-administracion.firebasestorage.app",
-        messagingSenderId: "247309275509",
-        appId: "1:247309275509:web:33d62925b18474b2ac833c",
-        measurementId: "G-G2T4HD22YH",
-      };
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      // Contar visita solo una vez por dispositivo
-      async function contarVisitaUnaVez() {
-        const yaVisito = localStorage.getItem("yaVisito");
-        if (yaVisito) return;
-
-        const visitasRef = doc(db, "estadisticas", "visitas");
-        const visitasSnap = await getDoc(visitasRef);
-
-        if (!visitasSnap.exists()) {
-          await setDoc(visitasRef, { contador: 1 });
-        } else {
-          await updateDoc(visitasRef, { contador: increment(1) });
-        }
-
-        localStorage.setItem("yaVisito", "true");
-      }
-
-      // Info del dispositivo
-      function obtenerInfoDispositivo() {
-        const ua = navigator.userAgent || "";
-        let so = "Desconocido";
-        if (/Android/i.test(ua)) so = "Android";
-        else if (/iPhone|iPad|iPod/i.test(ua)) so = "iOS";
-        else if (/Windows/i.test(ua)) so = "Windows";
-        else if (/Mac/i.test(ua)) so = "MacOS";
-        else if (/Linux/i.test(ua)) so = "Linux";
-
-        const dispositivo = /Android|iPhone|iPad|iPod/i.test(ua)
-          ? "Móvil"
-          : "PC";
-
-        let navegador = "Desconocido";
-        if (/Chrome/i.test(ua) && !/Edge|OPR/i.test(ua)) navegador = "Chrome";
-        else if (/Firefox/i.test(ua)) navegador = "Firefox";
-        else if (/Safari/i.test(ua) && !/Chrome/i.test(ua))
-          navegador = "Safari";
-        else if (/Edge/i.test(ua)) navegador = "Edge";
-        else if (/OPR|Opera/i.test(ua)) navegador = "Opera";
-
-        const resolucion = `${window.innerWidth}x${window.innerHeight}`;
-        const idioma = navigator.language || navigator.userLanguage || "";
-
-        return {
-          visitanteID: obtenerVisitanteID(),
-          timestamp: new Date().toISOString(),
-          so,
-          dispositivo,
-          navegador,
-          resolucion,
-          idioma,
-          referrer: document.referrer || "",
-          page: location.pathname + location.search || "",
-        };
-      }
-
-      // Generar ID único por visitante
-      function obtenerVisitanteID() {
-        let id = localStorage.getItem("visitanteID");
-        if (!id) {
-          id =
-            crypto && crypto.randomUUID
-              ? crypto.randomUUID()
-              : "v-" +
-                Date.now() +
-                "-" +
-                Math.random().toString(36).slice(2, 9);
-          localStorage.setItem("visitanteID", id);
-        }
-        return id;
-      }
-
-      // Obtener IP
-      async function obtenerIP() {
-        try {
-          const res = await fetch("https://ipapi.co/json/");
-          const data = await res.json();
-          return {
-            ip: data.ip || "",
-            ciudad: data.city || "",
-            pais: data.country_name || "",
-          };
-        } catch (err) {
-          console.error("No se pudo obtener IP:", err);
-          return { ip: "", ciudad: "", pais: "" };
-        }
-      }
-
-      // Registrar visita detallada
-      async function registrarVisitaDetalle() {
-        try {
-          await contarVisitaUnaVez();
-          const info = obtenerInfoDispositivo();
-          const ipInfo = await obtenerIP();
-          const infoCompleta = { ...info, ...ipInfo };
-          await addDoc(collection(db, "visitas_detalle"), infoCompleta);
-        } catch (err) {
-          console.error("Error registrando visita detalle:", err);
-        }
-      }
-
-      // Ejecutar
-      registrarVisitaDetalle();
     </script>
   </body>
 </html>

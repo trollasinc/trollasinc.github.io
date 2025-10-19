@@ -119,6 +119,28 @@
           padding: 8px;
         }
       }
+      /* pequeño estilo para botones de acción en tablas */
+      .small-btn {
+        display: inline-block;
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: 6px;
+        margin: 2px;
+      }
+      .btn-danger {
+        background: crimson;
+        color: white;
+        border: none;
+      }
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+        border: none;
+      }
+      .muted {
+        color: #666;
+        font-size: 0.9rem;
+      }
     </style>
   </head>
   <body>
@@ -144,6 +166,7 @@
           <a href="#blog">Blog</a>
           <a href="#detalle-de-visitas">Detalle de visitas</a>
           <a href="#correos">Correos</a>
+          <a href="#ip-ban">Gestionar IPs</a>
         </div>
 
         <!-- Visitantes -->
@@ -237,6 +260,66 @@
           </div>
         </div>
 
+        <!-- IP Ban Section (nueva) -->
+        <div id="ip-ban" class="section">
+          <h3>🛑 Gestionar IPs (ban / unban)</h3>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+            <div>
+              <label class="muted">IP a banear</label>
+              <input type="text" id="ipInput" placeholder="Ej: 203.0.113.45" />
+              <label class="muted">Motivo</label>
+              <input
+                type="text"
+                id="reasonInput"
+                placeholder="Motivo del ban" />
+              <label class="muted">Duración (horas, 0 = permanente)</label>
+              <input
+                type="number"
+                id="durationInput"
+                placeholder="Horas (ej: 24)" />
+              <button id="banBtn" style="margin-top: 6px">Banear IP</button>
+            </div>
+
+            <div>
+              <label class="muted">Desbanear IP</label>
+              <input
+                type="text"
+                id="unbanIpInput"
+                placeholder="IP a desbanear" />
+              <button
+                id="unbanBtn"
+                style="margin-top: 6px; background: #28a745">
+                Desbanear IP
+              </button>
+
+              <p class="muted" style="margin-top: 12px">Bans actuales:</p>
+              <div
+                class="table-container"
+                style="max-height: 240px; overflow: auto">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>IP</th>
+                      <th>Perm</th>
+                      <th>Expira</th>
+                      <th>Operador</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyBans">
+                    <tr>
+                      <td colspan="5" style="text-align: center">
+                        Cargando bans...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Correos -->
         <div id="correos" class="section">
           <h3>📧 Correos registrados</h3>
@@ -277,6 +360,7 @@
         doc,
         updateDoc,
         deleteDoc,
+        setDoc,
         query,
         orderBy,
         limit,
@@ -321,6 +405,19 @@
       const tbodyClientes = document.getElementById("tbodyClientes");
       const contadorVisitantes = document.getElementById("contadorVisitantes");
 
+      // Visitas y correos
+      const tbodyVisitas = document.getElementById("tbodyVisitas");
+      const tbodyBans = document.getElementById("tbodyBans");
+      const tbodyCorreos = document.getElementById("tbodyCorreos");
+
+      // IP ban elements
+      const ipInput = document.getElementById("ipInput");
+      const reasonInput = document.getElementById("reasonInput");
+      const durationInput = document.getElementById("durationInput");
+      const banBtn = document.getElementById("banBtn");
+      const unbanIpInput = document.getElementById("unbanIpInput");
+      const unbanBtn = document.getElementById("unbanBtn");
+
       let clientes = [];
       let editando = false;
       let clienteEditandoId = null;
@@ -349,6 +446,7 @@
           await cargarVisitantes();
           await cargarVisitasDetalle();
           await cargarCorreos();
+          await cargarBans(); // cargamos bans en la UI
         } else {
           loginForm.style.display = "block";
           panel.classList.add("hidden");
@@ -388,8 +486,12 @@
       <td>${c.plan || ""}</td>
       <td>${c.info || ""}</td>
       <td>
-        <button onclick="editarCliente('${c.id}')">Editar</button>
-        <button onclick="eliminarCliente('${c.id}')">Eliminar</button>
+        <button onclick="editarCliente('${
+          c.id
+        }')" class="small-btn btn-secondary">Editar</button>
+        <button onclick="eliminarCliente('${
+          c.id
+        }')" class="small-btn btn-danger">Eliminar</button>
       </td>
     </tr>`;
         });
@@ -478,7 +580,6 @@
       }
 
       // --- Detalle visitas ---
-      const tbodyVisitas = document.getElementById("tbodyVisitas");
       async function cargarVisitasDetalle(filtroIP = "") {
         tbodyVisitas.innerHTML =
           "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
@@ -594,44 +695,167 @@
           cargarCorreos();
         });
 
-      // --- Blog ---
-      const blogTitulo = document.getElementById("blogTitulo");
-      const blogContenido = document.getElementById("blogContenido");
-      const blogEnlace = document.getElementById("blogEnlace");
-      const addBlogBtn = document.getElementById("addBlogBtn");
-      const blogMsg = document.getElementById("blogMsg");
+      // -------------------------------
+      // --- IP BAN / UNBAN FUNCTIONS ---
+      // -------------------------------
 
-      addBlogBtn.addEventListener("click", async () => {
-        const titulo = blogTitulo.value.trim();
-        const contenido = blogContenido.value.trim();
-        const enlace = blogEnlace.value.trim();
+      // Validación simple de IP (IPv4 e IPv6 básica)
+      function isValidIP(ip) {
+        if (!ip) return false;
+        const ipv4 =
+          /^(25[0-5]|2[0-4]\d|1?\d{1,2})(\.(25[0-5]|2[0-4]\d|1?\d{1,2})){3}$/;
+        const ipv6 = /^([0-9a-fA-F]{1,4}:){1,7}[0-9a-fA-F]{1,4}$/;
+        return ipv4.test(ip) || ipv6.test(ip);
+      }
 
-        if (!titulo || !contenido) {
-          blogMsg.textContent = "El título y contenido son obligatorios";
-          blogMsg.style.color = "red";
-          return;
-        }
+      // Banear IP: ip (string), reason (string), durationHours (number, 0 = permanente)
+      async function banIp(ip, reason, durationHours = 0) {
+        if (!isValidIP(ip)) throw new Error("IP no válida");
+        if (!auth.currentUser) throw new Error("Usuario no autenticado");
 
+        const docRef = doc(db, "ip_bans", ip);
+        const nowISO = new Date().toISOString();
+        const expiresAt =
+          durationHours > 0
+            ? new Date(Date.now() + durationHours * 3600e3).toISOString()
+            : null;
+
+        const data = {
+          ip,
+          reason: reason || "Sin motivo especificado",
+          operator: auth.currentUser.email || auth.currentUser.uid || "unknown",
+          permanent: durationHours === 0,
+          createdAt: nowISO,
+          expiresAt,
+        };
+
+        // Guardamos el ban con el ID = ip (fácil lookup)
+        await setDoc(docRef, data);
+
+        // registro opcional en logs (colección ip_ban_logs)
+        await addDoc(collection(db, "ip_ban_logs"), {
+          ip,
+          action: "ban",
+          operator: data.operator,
+          reason: data.reason,
+          createdAt: nowISO,
+        });
+
+        // actualizar UI
+        await cargarBans();
+      }
+
+      // Desbanear IP
+      async function unbanIp(ip) {
+        if (!isValidIP(ip)) throw new Error("IP no válida");
+        if (!auth.currentUser) throw new Error("Usuario no autenticado");
+
+        const docRef = doc(db, "ip_bans", ip);
+        await deleteDoc(docRef);
+
+        await addDoc(collection(db, "ip_ban_logs"), {
+          ip,
+          action: "unban",
+          operator: auth.currentUser.email || auth.currentUser.uid || "unknown",
+          createdAt: new Date().toISOString(),
+        });
+
+        await cargarBans();
+      }
+
+      // Cargar bans para mostrar en la tabla
+      async function cargarBans() {
         try {
-          await addDoc(collection(db, "blog"), {
-            titulo,
-            contenido,
-            enlace: enlace || "",
-            fecha: new Date().toISOString(),
+          const snap = await getDocs(collection(db, "ip_bans"));
+          if (snap.empty) {
+            tbodyBans.innerHTML =
+              "<tr><td colspan='5' style='text-align:center'>No hay bans</td></tr>";
+            return;
+          }
+          tbodyBans.innerHTML = "";
+          snap.forEach((s) => {
+            const b = s.data();
+            const exp = b.expiresAt
+              ? new Date(b.expiresAt).toLocaleString()
+              : b.permanent
+              ? "Nunca"
+              : "—";
+            tbodyBans.innerHTML += `<tr>
+              <td style="word-break:break-all">${b.ip}</td>
+              <td>${b.permanent ? "Sí" : "No"}</td>
+              <td>${exp}</td>
+              <td>${b.operator || "—"}</td>
+              <td>
+                <button class="small-btn btn-danger" onclick="handleUnban('${
+                  b.ip
+                }')">Desbanear</button>
+              </td>
+            </tr>`;
           });
-
-          blogMsg.textContent = "Entrada publicada correctamente ✅";
-          blogMsg.style.color = "green";
-
-          blogTitulo.value = "";
-          blogContenido.value = "";
-          blogEnlace.value = "";
         } catch (err) {
           console.error(err);
-          blogMsg.textContent = "Error publicando la entrada";
-          blogMsg.style.color = "red";
+          tbodyBans.innerHTML =
+            "<tr><td colspan='5' style='text-align:center;color:red'>Error cargando bans</td></tr>";
+        }
+      }
+
+      // Handlers de botones (UI)
+      banBtn.addEventListener("click", async () => {
+        try {
+          const ip = ipInput.value.trim();
+          const reason = reasonInput.value.trim();
+          const duration = parseInt(durationInput.value || "0", 10);
+          if (!ip || !reason) return alert("IP y motivo son obligatorios");
+          if (!isValidIP(ip)) return alert("IP no válida");
+          // confirmar
+          if (!confirm(`¿Banear ${ip}? (permanente: ${duration === 0})`))
+            return;
+          await banIp(ip, reason, duration);
+          alert("IP baneada ✅");
+          ipInput.value = "";
+          reasonInput.value = "";
+          durationInput.value = "";
+        } catch (err) {
+          console.error(err);
+          alert("Error al banear: " + (err.message || err));
         }
       });
+
+      unbanBtn.addEventListener("click", async () => {
+        try {
+          const ip = unbanIpInput.value.trim();
+          if (!ip) return alert("Introduce una IP");
+          if (!isValidIP(ip)) return alert("IP no válida");
+          if (!confirm(`¿Desbanear ${ip}?`)) return;
+          await unbanIp(ip);
+          alert("IP desbaneada ✅");
+          unbanIpInput.value = "";
+        } catch (err) {
+          console.error(err);
+          alert("Error al desbanear: " + (err.message || err));
+        }
+      });
+
+      // Exponer handler para botones generados en tabla (global)
+      window.handleUnban = async function (ip) {
+        if (!confirm(`¿Desbanear ${ip}?`)) return;
+        try {
+          await unbanIp(ip);
+          alert("IP desbaneada ✅");
+        } catch (err) {
+          console.error(err);
+          alert("Error: " + (err.message || err));
+        }
+      };
+
+      // -------------------------------
+      // --- FIN IP BAN / UNBAN ---
+      // -------------------------------
+
+      // Si quieres bloquear el acceso al panel basado en IP, lo ideal es hacerlo server-side.
+      // Aquí no he añadido bloqueo automático en onAuthStateChanged porque la IP real
+      // no se obtiene con fiabilidad desde el frontend. Si quieres, puedo añadir un ejemplo
+      // usando un Cloud Function para devolver la IP real y chequearla (dime si lo quieres).
     </script>
   </body>
 </html>
