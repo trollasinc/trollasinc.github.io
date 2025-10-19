@@ -309,6 +309,7 @@
       const panel = document.getElementById("panel");
       const loginMsg = document.getElementById("loginMsg");
 
+      // Clientes
       const nombre = document.getElementById("nombre");
       const apellidos = document.getElementById("apellidos");
       const correo = document.getElementById("correo");
@@ -465,7 +466,6 @@
       // --- Visitantes ---
       async function cargarVisitantes() {
         try {
-          // Obtenemos el documento "visitas" de la colección "estadisticas"
           const visitasSnap = await getDoc(doc(db, "estadisticas", "visitas"));
           const contador = visitasSnap.exists()
             ? visitasSnap.data().contador
@@ -480,7 +480,6 @@
       // --- Detalle visitas ---
       const tbodyVisitas = document.getElementById("tbodyVisitas");
       async function cargarVisitasDetalle(filtroIP = "") {
-        const tbodyVisitas = document.getElementById("tbodyVisitas");
         tbodyVisitas.innerHTML =
           "<tr><td colspan='7' style='text-align:center'>Cargando...</td></tr>";
 
@@ -503,7 +502,6 @@
             const d = docSnap.data();
             const ip = d.ip || "—";
 
-            // Filtrar por IP si se proporcionó
             if (filtroIP && !ip.includes(filtroIP)) return;
 
             const fecha = d.timestamp
@@ -533,7 +531,7 @@
       }
       document.getElementById("btnBuscarIP").addEventListener("click", () => {
         const ip = document.getElementById("buscarIP").value.trim();
-        cargarVisitasDetalle(ip); // filtra por la IP ingresada
+        cargarVisitasDetalle(ip);
       });
 
       document
@@ -542,7 +540,7 @@
 
       // --- Correos ---
       async function cargarCorreos(filtroCorreo = "") {
-        const tableBody = document.getElementById("tbodyCorreos"); // Asegúrate de tener <tbody id="tbodyCorreos">
+        const tableBody = document.getElementById("tbodyCorreos");
         tableBody.innerHTML =
           "<tr><td colspan='2' style='text-align:center'>Cargando...</td></tr>";
 
@@ -550,7 +548,7 @@
           const q = query(
             collection(db, "correos"),
             orderBy("fecha", "desc"),
-            limit(100) // ajusta según necesites
+            limit(100)
           );
           const snap = await getDocs(q);
 
@@ -565,7 +563,6 @@
             const data = docSnap.data();
             const correo = data.correo || "";
 
-            // Filtrar por correo si se proporciona
             if (filtroCorreo && !correo.includes(filtroCorreo)) return;
 
             const fecha = data.fecha?.toDate
@@ -584,7 +581,6 @@
         }
       }
 
-      // Buscar correo
       document
         .getElementById("btnBuscarCorreo")
         .addEventListener("click", () => {
@@ -592,12 +588,50 @@
           cargarCorreos(filtro);
         });
 
-      // Refrescar todos
       document
         .getElementById("btnRefreshCorreos")
         .addEventListener("click", () => {
-          cargarCorreos(); // sin filtro
+          cargarCorreos();
         });
+
+      // --- Blog ---
+      const blogTitulo = document.getElementById("blogTitulo");
+      const blogContenido = document.getElementById("blogContenido");
+      const blogEnlace = document.getElementById("blogEnlace");
+      const addBlogBtn = document.getElementById("addBlogBtn");
+      const blogMsg = document.getElementById("blogMsg");
+
+      addBlogBtn.addEventListener("click", async () => {
+        const titulo = blogTitulo.value.trim();
+        const contenido = blogContenido.value.trim();
+        const enlace = blogEnlace.value.trim();
+
+        if (!titulo || !contenido) {
+          blogMsg.textContent = "El título y contenido son obligatorios";
+          blogMsg.style.color = "red";
+          return;
+        }
+
+        try {
+          await addDoc(collection(db, "blog"), {
+            titulo,
+            contenido,
+            enlace: enlace || "",
+            fecha: new Date().toISOString(),
+          });
+
+          blogMsg.textContent = "Entrada publicada correctamente ✅";
+          blogMsg.style.color = "green";
+
+          blogTitulo.value = "";
+          blogContenido.value = "";
+          blogEnlace.value = "";
+        } catch (err) {
+          console.error(err);
+          blogMsg.textContent = "Error publicando la entrada";
+          blogMsg.style.color = "red";
+        }
+      });
     </script>
   </body>
 </html>
