@@ -225,8 +225,7 @@ async function cargarVisitasDetalle(filtroIP = "") {
   try {
     const q = query(
       collection(db, "visitas_detalle"),
-      orderBy("timestamp", "desc"),
-      limit(50)
+      orderBy("timestamp", "desc")
     );
     const snap = await getDocs(q);
 
