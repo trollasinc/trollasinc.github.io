@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clicker</title>
+    <script type="module" src="../../../ip-security.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="header">
+      <h2>¡Haz clic en la pantalla!</h2>
+      <p id="clicksText">Clicks: 0</p>
+    </div>
+    <br />
+    <div id="clickZone"></div>
+    <br />
+    <div id="message"></div>
+    <br />
+    <div id="shop">
+      <h2>Tienda</h2>
+      <div class="elementos">
+        <div class="elementoTienda">
+          <p>Mejorar clic (+1 por clic)</p>
+          <button id="upgradeClick">Comprar (10 clicks)</button>
+        </div>
+        <div class="elementoTienda">
+          <p id="buyPet1Text">Comprar Mascota 1</p>
+          <button id="buyPet1">Comprar (100 clicks)</button>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
