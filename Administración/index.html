@@ -8,7 +8,7 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
       rel="stylesheet" />
-    <style></style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <header>Panel de administración - Trollas. Inc.</header>
@@ -34,6 +34,8 @@
           <a href="#detalle-de-visitas">Detalle de visitas</a>
           <a href="#correos">Correos</a>
           <a href="#ip-ban">Gestionar IPs</a>
+          <a href="#documentos">Documentos</a>
+          <a href="#en-desarrollo">En desarrollo</a>
         </div>
 
         <!-- Visitantes -->
@@ -95,6 +97,16 @@
           <button id="addBlogBtn">Publicar entrada</button>
           <p id="blogMsg"></p>
         </div>
+        <!-- Gráfico de visitas -->
+        <div>
+          <label for="timeRange">Rango de tiempo:</label>
+          <select id="timeRange">
+            <option value="24h">Últimas 24 horas</option>
+            <option value="30d">Últimos 30 días</option>
+          </select>
+        </div>
+
+        <canvas id="visitasChart" width="600" height="300"></canvas>
 
         <!-- Detalle de visitas -->
         <div id="detalle-de-visitas" class="section">
@@ -284,12 +296,12 @@
             <pre id="viewerContenido" style="white-space: pre-wrap"></pre>
             <button
               id="closeViewerBtn"
-              style="margin-top: 6px; background: #6c757d">
+              style="margin-top: 6px; background-color: crimson">
               Cerrar
             </button>
           </div>
         </div>
-        <div class="section">
+        <div id="en-desarrollo" class="section">
           <h3>🎮 En desarrollo</h3>
           <button onclick="location.href='Clicker/Play/'">Clicker</button>
         </div>

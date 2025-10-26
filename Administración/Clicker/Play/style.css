@@ -14,8 +14,8 @@ body {
 #clickZone {
     background-color: white;
     border-radius: 50%;
-    width: 50%;  
-    height: 50%; 
+    width: 30vw;  /* 30% del ancho de la pantalla */
+    height: 30vw; /* usar el mismo valor que el ancho para mantener círculo */
     cursor: pointer;
     transition: background-color 0.3s ease;
     border: 1px solid black;

@@ -595,3 +595,96 @@ onAuthStateChanged(auth, async (user) => {
     await cargarDocumentos();
   }
 });
+
+// --- Gráfico de visitas ---
+let visitasChart;
+
+async function cargarGraficoVisitas(rango = "24h") {
+  const snap = await getDocs(
+    query(collection(db, "visitas_detalle"), orderBy("timestamp", "desc"))
+  );
+
+  const ahora = new Date();
+  const data = {};
+
+  if (rango === "24h") {
+    // Inicializamos todas las horas en 0
+    for (let h = 0; h < 24; h++) {
+      data[h + ":00"] = 0;
+    }
+  } else {
+    // Últimos 30 días: inicializamos todas las fechas en 0
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(ahora.getDate() - i);
+      const label = d.toLocaleDateString();
+      data[label] = 0;
+    }
+  }
+
+  snap.forEach((docSnap) => {
+    const v = docSnap.data();
+    if (!v.timestamp) return;
+
+    const ts = new Date(v.timestamp).getTime();
+
+    if (rango === "24h" && ts < ahora - 24 * 3600e3) return;
+    if (rango === "30d" && ts < ahora - 30 * 24 * 3600e3) return;
+
+    const d = new Date(ts);
+    let label;
+    if (rango === "24h") {
+      label = d.getHours() + ":00";
+    } else {
+      label = d.toLocaleDateString();
+    }
+
+    if (label in data) data[label] += 1;
+  });
+
+  const labels = Object.keys(data);
+  const counts = labels.map((l) => data[l]);
+
+  // Crear o actualizar Chart.js
+  if (visitasChart) {
+    visitasChart.data.labels = labels;
+    visitasChart.data.datasets[0].data = counts;
+    visitasChart.update();
+  } else {
+    const ctx = document.getElementById("visitasChart").getContext("2d");
+    visitasChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Visitas",
+            data: counts,
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return context.dataset.label + ": " + context.raw + " visitas";
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+}
+
+// Listener para cambiar rango
+document.getElementById("timeRange").addEventListener("change", (e) => {
+  cargarGraficoVisitas(e.target.value);
+});
+
+// Cargar gráfico al inicio
+cargarGraficoVisitas("24h");
