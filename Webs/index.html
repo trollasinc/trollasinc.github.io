@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nuestras Páginas Web 💻</title>
+    <script type="module" src="../ip-security.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: #f0f4f8;
+        color: #111;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      header h1 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        text-align: center;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      .cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        width: 100%;
+        max-width: 1200px;
+        justify-items: center;
+        align-items: start;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.3s;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+
+      .card h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .card p {
+        font-size: 0.95rem;
+        color: #333;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Nuestras Páginas Web 💻</h1>
+    </header>
+
+    <main>
+      <div class="cards-container">
+        <div class="card">
+          <a style="text-decoration: none; color: black" href="../Germany_18/">
+            <img
+              src="../Germany_18/Img/Logos/channels4_profile(2).jpg"
+              alt="Germany_18" />
+            <h3>Germany_18</h3>
+            <p>
+              Visita ahora la nueva web de Germán, más conocido como Germany_18,
+              un youtuber que se dedica a subir videos de videojuegos.
+            </p>
+          </a>
+        </div>
+        <div class="card">
+          <a style="text-decoration: none; color: black" href="../AdriElGamer/">
+            <img
+              src="../AdriElGamer/Img/Logos/channels4_profile (4).jpg"
+              alt="Adri El Gamer" />
+            <h3>Adri El Gamer</h3>
+            <p>
+              Soy Adrián, más conocido como Adri el Gamer. Me gustan subir
+              videos a YouTube de gatos y videojuegos. Espero que os guste.
+            </p>
+          </a>
+        </div>
+        <div class="card">
+          <a style="text-decoration: none; color: black" href="../AdriElGamer/">
+            <img
+              src="../Pequebrainrot/Img/Brainrot/Tung Tung Tung Sahur.jpeg"
+              alt="
+              PequeBrainrot" />
+            <h3>PequeBrainrot</h3>
+            <p>
+              Descarga imágenes y sonidos de Brainrots en alta calidad y
+              disfruta de contenido exclusivo en PequeBrainrot.
+            </p>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+  </body>
+</html>
