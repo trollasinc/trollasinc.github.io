@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plantilla 2</title>
+    <script type="module" src="../../ip-security.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #0f0f0f;
+        color: #fff;
+        padding-top: 56px; /* espacio para el banner */
+      }
+
+      header {
+        background: linear-gradient(135deg, #6a11cb, #2575fc);
+        padding: 60px 20px;
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      nav {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        background: #111;
+        padding: 15px 0;
+      }
+
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      nav a:hover {
+        color: #6a11cb;
+      }
+
+      .section-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .card {
+        background: #1a1a1a;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+      }
+
+      .card img {
+        width: 100%;
+        display: block;
+      }
+
+      .card-content {
+        padding: 20px;
+      }
+
+      .card-content h3 {
+        color: #6a11cb;
+        margin-top: 0;
+      }
+
+      .card-content p {
+        color: #ddd;
+      }
+
+      footer {
+        text-align: center;
+        padding: 25px;
+        background: #111;
+        color: #aaa;
+      }
+
+      .text-zone {
+        background: #1a1a1a;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .text-zone:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.6);
+      }
+
+      .text-zone p {
+        padding: 20px;
+        padding-top: 0px;
+        color: #ddd;
+      }
+
+      .text-zone h3 {
+        padding: 20px;
+        padding-bottom: 0px;
+        color: #6a11cb;
+        margin-top: 0;
+      }
+
+      .text-zone-container {
+        max-width: 1200px;
+        margin: 50px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      /* --- Banner de anuncios --- */
+      .ads-banner {
+        width: 100%;
+        background: #fffbe7;
+        border-bottom: 1px solid #ffe082;
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+
+      .ad-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1em;
+      }
+
+      .ad-label {
+        background: #ffe082;
+        color: #b8860b;
+        font-size: 0.85em;
+        font-weight: bold;
+        border-radius: 3px;
+        padding: 2px 6px;
+      }
+
+      .ad-item a {
+        color: #0074d9;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+
+      .ad-item a:hover {
+        color: #005fa3;
+      }
+
+      .ad-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      @media (max-width: 600px) {
+        .ads-banner {
+          flex-direction: column;
+          gap: 8px;
+          padding: 8px 0;
+        }
+
+        body {
+          padding-top: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ads-banner">
+      <div class="ad-item">
+        <span class="ad-label">Anuncio</span>
+        <a href="#">Cargando anuncio...</a>
+      </div>
+    </div>
+
+    <header>Plantilla 2</header>
+
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Servicios</a>
+      <a href="#">Portafolio</a>
+      <a href="#">Contacto</a>
+    </nav>
+
+    <section class="section-container">
+      <div class="card">
+        <img src="Img/image.png" alt="Proyecto 1" />
+        <div class="card-content">
+          <h3>Proyecto 1</h3>
+          <p>Descripción corta del proyecto o servicio.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="Img/image.png" alt="Proyecto 2" />
+        <div class="card-content">
+          <h3>Proyecto 2</h3>
+          <p>Descripción corta del proyecto o servicio.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="Img/image.png" alt="Proyecto 3" />
+        <div class="card-content">
+          <h3>Proyecto 3</h3>
+          <p>Descripción corta del proyecto o servicio.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="Img/image.png" alt="Proyecto 4" />
+        <div class="card-content">
+          <h3>Proyecto 4</h3>
+          <p>Descripción corta del proyecto o servicio.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="text-zone-container">
+      <div class="text-zone">
+        <h3>Zona de texto</h3>
+        <p>Aquí puedes añadir texto si lo deseas.</p>
+        <p>
+          Puedes añadir o modificar secciones a tu gusto, también podemos hacer
+          secciones personalizadas a tu gusto.
+        </p>
+      </div>
+    </section>
+    <div class="watermark">
+      <img
+        src="Img/Logos/Trollas. Inc.png"
+        alt="Marca de agua"
+        class="watermark-img" />
+      <div class="watermark-text">Trollas. Inc.</div>
+    </div>
+    <style>
+      .watermark {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.5;
+        z-index: 9999;
+        pointer-events: none;
+        user-select: none;
+      }
+      .watermark-img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        margin-bottom: 4px;
+      }
+      .watermark-text {
+        font-size: 12px;
+        color: #222;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 4px;
+        padding: 2px 8px;
+        text-align: center;
+      }
+    </style>
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+
+    <script>
+      // Rotador de anuncios
+      const ads = [
+        {
+          img: "img/Logos/channels4_profile.jpg",
+          alt: "LeonTrollas",
+          url: "https://youtube.com/@leontrollas",
+          text: "¡Suscríbete a LeonTrollas!",
+        },
+        {
+          img: "Img/Logos/Trollas. Inc.png",
+          alt: "Trollas. Inc.",
+          url: "https://leonperriman.wixsite.com/trollasinc",
+          text: "¡Únete al equipo Trollas. Inc.!",
+        },
+      ];
+
+      let adIndex = 0;
+      const adsBanner = document.querySelector(".ads-banner");
+
+      function renderAd() {
+        const ad = ads[adIndex];
+        adsBanner.innerHTML = `
+          <div class="ad-item">
+            <span class="ad-label">Anuncio</span>
+            <img src="${ad.img}" alt="${ad.alt}" class="ad-img" />
+            <a href="${ad.url}" target="_blank" rel="noopener">${ad.text}</a>
+          </div>
+        `;
+      }
+
+      renderAd();
+      setInterval(() => {
+        adIndex = (adIndex + 1) % ads.length;
+        renderAd();
+      }, 4000);
+    </script>
+  </body>
+</html>
