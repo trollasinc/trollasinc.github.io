@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog - Trollas. Inc.</title>
+    <script type="module" src="../ip-security.js"></script>
+    <link rel="icon" href="../Logos/Trollas. Inc.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+        color: #111;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-weight: 700;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+      }
+      main {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .post {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: transform 0.3s;
+      }
+      .post:hover {
+        transform: translateY(-5px);
+      }
+      .post h2 {
+        margin-bottom: 0.5rem;
+      }
+      .post p {
+        color: #333;
+        line-height: 1.6;
+      }
+      .date {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+    <style>
+      /* Estilos básicos del popup */
+      #emailModal {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      #emailModalContent {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        width: 300px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      #emailModal input[type="email"] {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #emailModal button {
+        padding: 10px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="emailModal">
+      <div id="emailModalContent">
+        <h2>Introduce tu correo para continuar</h2>
+        <br />
+        <p>
+          Para acceder a ciertas funciones en la web como descargar videojuegos,
+          juegos online o leer las noticias del blog deberás iniciar sesión con
+          tu correo electrónico
+        </p>
+        <p>
+          Al introducir tu correo electrónico aceptas recibir comunicaciones por
+          correo electrónico sobre noticias, novedades y promociones de nuestra
+          empresa. Puedes darte de baja en cualquier momento.
+        </p>
+
+        <br />
+        <input
+          type="email"
+          id="userEmail"
+          placeholder="correo@ejemplo.com"
+          required />
+        <br />
+        <button id="submitEmail">Enviar</button>
+      </div>
+    </div>
+    <header>
+      <h1>Trollas. Inc.</h1>
+      <nav>
+        <a href="../index.html">⬅️ Volver ⬅️</a>
+      </nav>
+    </header>
+
+    <main></main>
+    <script type="module" src="blog.js"></script>
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+    <div
+      id="google_translate_element"
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        display: none;
+      "></div>
+    <script type="text/javascript" src="../translate.js"></script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="../../editor.js"></script>
+  </body>
+</html>

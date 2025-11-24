@@ -1,0 +1,110 @@
+<style>
+      .ads-banner {
+        width: 100%;
+        max-width: 100vw;
+        background: #fffbe7;
+        border-bottom: 1px solid #ffe082;
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .ad-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1em;
+      }
+      .ad-label {
+        background: #ffe082;
+        color: #b8860b;
+        font-size: 0.85em;
+        font-weight: bold;
+        border-radius: 3px;
+        padding: 2px 6px;
+        margin-right: 4px;
+      }
+      .ad-item a {
+        color: #0074d9;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+      .ad-item a:hover {
+        color: #005fa3;
+      }
+      body {
+        padding-top: 56px; /* Espacio para el banner */
+      }
+      @media (max-width: 600px) {
+        .ads-banner {
+          flex-direction: column;
+          gap: 8px;
+          padding: 8px 0;
+        }
+        body {
+          padding-top: 80px;
+        }
+      }
+    </style>
+
+<div class="ads-banner">
+      <div class="ad-item">
+        <span class="ad-label">Anuncio</span>
+        <a href="--" target="_blank" rel="noopener">
+          --
+        </a>
+      </div>
+      <div class="ad-item">
+        <span class="ad-label"></span>
+          Anuncio
+        </span>
+        <a
+          href="--"
+          target="_blank"
+          rel="noopener"
+          style="margin-left: 0">
+          --
+        </a>
+
+      </div>
+
+<script>
+        // Anuncios con imagen y rotación automática
+        const ads = [
+          {
+            img: "img/Logos/channels4_profile.jpg",
+            alt: "LeonTrollas",
+            url: "https://youtube.com/@leontrollas",
+            text: "¡Suscribete a LeonTrollas!",
+          },
+          {
+            img: "Img/Logos/Trollas. Inc.png",
+            alt: "Trollas. Inc.",
+            url: "https://leonperriman.wixsite.com/trollasinc",
+            text: "¡Únete a el equipo Trollas. Inc.!",
+          },
+        ];
+        let adIndex = 0;
+        const adsBanner = document.querySelector(".ads-banner");
+        function renderAd() {
+          const ad = ads[adIndex];
+          adsBanner.innerHTML = `
+        <div class="ad-item">
+          <span class="ad-label">Anuncio</span>
+          <img src="${ad.img}" alt="${ad.alt}" class="ad-img" />
+          <a href="${ad.url}" target="_blank" rel="noopener">${ad.text}</a>
+        </div>
+          `;
+        }
+        renderAd();
+        setInterval(() => {
+          adIndex = (adIndex + 1) % ads.length;
+          renderAd();
+        }, 4000);
+      </script>

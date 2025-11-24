@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../Logos/Balancea.png" />
+    <title>Balancea! - Trollas. Inc.</title>
+    <script type="module" src="../ip-security.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+        color: #111;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-weight: 700;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+      }
+      main {
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+      .game-container {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        text-align: center;
+      }
+      .game-container img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1.5rem;
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+    </style>
+    <style>
+      /* Estilos básicos del popup */
+      #emailModal {
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        z-index: 9999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      #emailModalContent {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        width: 300px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      #emailModal input[type="email"] {
+        width: 90%;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      #emailModal button {
+        padding: 10px 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="emailModal">
+      <div id="emailModalContent">
+        <h2>Introduce tu correo para continuar</h2>
+        <br />
+        <p>
+          Para acceder a ciertas funciones en la web como descargar videojuegos,
+          juegos online o leer las noticias del blog deberás iniciar sesión con
+          tu correo electrónico.
+        </p>
+        <p>
+          Al introducir tu correo electrónico aceptas recibir comunicaciones por
+          correo electrónico sobre noticias, novedades y promociones de nuestra
+          empresa. Puedes darte de baja en cualquier momento.
+        </p>
+        <br />
+        <input
+          type="email"
+          id="userEmail"
+          placeholder="correo@ejemplo.com"
+          required />
+        <br />
+        <button id="submitEmail">Enviar</button>
+      </div>
+    </div>
+    <header>
+      <h1>Trollas. Inc.</h1>
+      <nav>
+        <a href="../index.html">⬅️ Volver ⬅️</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="game-container">
+        <img src="../Logos/Balancea.png" alt="Balancea! Balancea!" />
+        <h2>Balancea! Balancea! y que no se caiga</h2>
+        <p>
+          Un divertido juego de equilibrio con objetos. ¿Qué puede salir mal? 😎
+        </p>
+        <p>
+          Disfruta de horas de diversión mientras equilibras y desafías la
+          gravedad.
+        </p>
+        <a href="../Redirect/ZG93bmxvYWQtYmFsYW5jZWE/" class="btn">Descargar</a>
+        <a href="../Redirect/QmFsYW5jZWE/" class="btn">Jugar</a>
+      </div>
+    </main>
+
+    <footer>&copy; 2025 Trollas. Inc. Todos los derechos reservados.</footer>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        setDoc,
+        updateDoc,
+        increment,
+        collection,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+      // Config Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyCx8ITT_KZVSzZTWN20qV1yEZ5CwILkm2M",
+        authDomain: "trollas-inc-administracion.firebaseapp.com",
+        projectId: "trollas-inc-administracion",
+        storageBucket: "trollas-inc-administracion.firebasestorage.app",
+        messagingSenderId: "247309275509",
+        appId: "1:247309275509:web:33d62925b18474b2ac833c",
+        measurementId: "G-G2T4HD22YH",
+      };
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // --- Popup y LocalStorage ---
+      const modal = document.getElementById("emailModal");
+      const submitBtn = document.getElementById("submitEmail");
+      const emailInput = document.getElementById("userEmail");
+
+      // Si no hay correo en localStorage, mostrar modal
+      if (!localStorage.getItem("correoGuardado")) {
+        modal.style.display = "block";
+      }
+
+      submitBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (email && /\S+@\S+\.\S+/.test(email)) {
+          try {
+            // Guardar en Firestore
+            await addDoc(collection(db, "correos"), {
+              correo: email,
+              fecha: new Date(),
+            });
+            // Guardar en localStorage
+            localStorage.setItem("correoGuardado", "true");
+            // Ocultar modal
+            modal.style.display = "none";
+          } catch (error) {
+            alert("Error al enviar el correo: " + error);
+          }
+        } else {
+          alert("Por favor, introduce un correo válido.");
+        }
+      });
+
+      // Opcional: evitar cerrar modal con clic fuera
+      window.addEventListener("click", (e) => {
+        if (e.target == modal) {
+          e.preventDefault();
+        }
+      });
+    </script>
+    <div
+      id="google_translate_element"
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        display: none;
+      "></div>
+    <script type="text/javascript" src="../translate.js"></script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="../../editor.js"></script>
+  </body>
+</html>

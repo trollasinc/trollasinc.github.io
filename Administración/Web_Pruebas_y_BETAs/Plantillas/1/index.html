@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Plantilla 1</title>
+        <script type="module" src="../../ip-security.js"></script>
+    <link rel="icon" type="image/png" href="Img/image.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f4f4f4;
+      }
+      header {
+        background: #0074d9;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+      }
+      section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+      }
+      h1,
+      section,
+      header {
+        box-shadow: none;
+        border: none;
+        background: none;
+        color: inherit;
+        padding: 0;
+        margin: 0;
+      }
+      body {
+        margin: 0;
+        background: #e9ecef;
+      }
+      header {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(8px);
+        color: #222;
+        border-radius: 16px;
+        margin: 32px auto 0 auto;
+        max-width: 600px;
+        padding: 24px 0;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+      }
+      section {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        margin: 32px auto 0 auto;
+        max-width: 600px;
+        padding: 32px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+      }
+      .youtube-section {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(12px);
+        border-radius: 16px;
+        margin: 32px auto 0 auto;
+        max-width: 600px;
+        padding: 32px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+      }
+      .youtube-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .youtube-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: background 0.2s;
+        border-radius: 12px;
+        padding: 8px;
+      }
+      .youtube-item:hover {
+        background: rgba(0, 0, 0, 0.07);
+      }
+      .youtube-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .youtube-link {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: #222;
+        font-weight: 500;
+        font-size: 1.1em;
+        gap: 16px;
+        width: 100%;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      h2 {
+        margin: 0 0 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Banner de anuncios tipo Google Ads -->
+    
+    <style>
+      .ads-banner {
+        width: 100%;
+        max-width: 100vw;
+        background: #fffbe7;
+        border-bottom: 1px solid #ffe082;
+        display: flex;
+        gap: 32px;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      }
+      .ad-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1em;
+      }
+      .ad-label {
+        background: #ffe082;
+        color: #b8860b;
+        font-size: 0.85em;
+        font-weight: bold;
+        border-radius: 3px;
+        padding: 2px 6px;
+        margin-right: 4px;
+      }
+      .ad-item a {
+        color: #0074d9;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+      .ad-item a:hover {
+        color: #005fa3;
+      }
+      body {
+        padding-top: 56px; /* Espacio para el banner */
+      }
+      @media (max-width: 600px) {
+        .ads-banner {
+          flex-direction: column;
+          gap: 8px;
+          padding: 8px 0;
+        }
+        body {
+          padding-top: 80px;
+        }
+      }
+    </style>
+<!--<style>
+body, html { margin: 0; padding: 0; height: 100%; }
+#anuncio {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+#contenido-anuncio {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#cerrar1, #cerrar2 {
+  position: absolute;
+  top: 75px;
+  right: 10px;
+  background: rgba(255,255,255,0.8);
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 1;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#cerrar1 { pointer-events: none; opacity: 0.5; }
+#logo-boton {
+  position: absolute;
+  bottom: 50px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: white;
+  bottom: 0px;
+  left: 10px;
+  right: 10px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
+#logo-boton img { width: 100px; height: auto; }
+#visitir { padding: 8px 16px; font-size: 16px; cursor: pointer; border: none; border-radius: 6px; background: #4285f4; color: #fff; }
+</style>
+
+<div id="anuncio">
+  <div id="contenido-anuncio" style="position:relative;">
+    <span class="ad-label" style="
+      position:absolute;
+      top:10px;
+      left:10px;
+      background-color: rgba(255,0,0,0.8);
+      color:white;
+      font-weight:bold;
+      padding:5px 10px;
+      border-radius:5px;
+      font-size:14px;
+      z-index:10;
+    ">Anuncio</span>
+    <video autoplay muted loop id="video-anuncio">
+      <source src="Img/Ads/Trollas. Inc..mp4" type="video/mp4">
+      Tu navegador no soporta video.
+    </video>
+    <button id="cerrar1">×</button>
+    <div id="logo-boton" style="display:none; text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+        <img src="Img/Logos/Trollas. Inc.png" alt="Trollas Inc" style="width:80px; height:auto;">
+        <p style="color:black; font-size:18px; margin:0;">Trollas. Inc.</p>
+      </div>
+      <a href="https://leonperriman.wixsite.com/trollasinc">
+        <button id="visitir" style="margin-top:10px;">Visitar Sitio</button>
+      </a>
+    </div>
+    <button id="cerrar2" style="display:none;">×</button>
+  </div>
+</div>
+    <video autoplay muted loop id="video-anuncio">
+      <source src="Img/Ads/Trollas. Inc..mp4" type="video/mp4">
+      Tu navegador no soporta video.
+    </video>
+
+    <button id="cerrar1">×</button>
+    <div id="logo-boton" style="display:none; text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:10px;">
+        <img src="Img/Logos/Trollas. Inc.png" alt="Trollas Inc" style="width:80px; height:auto;">
+        <p style="color:black; font-size:18px; margin:0;">Trollas. Inc.</p>
+      </div>
+      <a href="https://leonperriman.wixsite.com/trollasinc">
+        <button id="visitir" style="margin-top:10px;">Visitar Sitio</button>
+      </a>
+    </div>
+    <button id="cerrar2" style="display:none;">×</button>
+  </div>
+</div>
+
+<script>
+let anuncio = document.getElementById('anuncio');
+let cerrar1 = document.getElementById('cerrar1');
+let cerrar2 = document.getElementById('cerrar2');
+let logoBoton = document.getElementById('logo-boton');
+
+function mostrarAnuncio() {
+  anuncio.style.display = 'flex';
+  // Activar la primera X después de 5 seg
+  setTimeout(() => {
+    cerrar1.style.pointerEvents = 'auto';
+    cerrar1.style.opacity = '1';
+  }, 5000);
+}
+
+cerrar1.addEventListener('click', () => {
+  cerrar1.style.display = 'none';
+  logoBoton.style.display = 'flex';
+  setTimeout(() => {
+    cerrar2.style.display = 'flex';
+  }, 5000); // segunda X aparece tras 5 seg
+});
+
+cerrar2.addEventListener('click', () => {
+  anuncio.style.display = 'none';
+});
+
+window.onload = mostrarAnuncio;
+</script>-->
+
+<div class="ads-banner">
+      <div class="ad-item">
+        <span class="ad-label">Anuncio</span>
+        <a href="--" target="_blank" rel="noopener">
+          --
+        </a>
+      </div>
+      <div class="ad-item">
+        <span class="ad-label"></span>
+          Anuncio
+        </span>
+        <a
+          href="--"
+          target="_blank"
+          rel="noopener"
+          style="margin-left: 0">
+          --
+        </a>
+
+      </div>
+      <style>
+        .ad-item {
+          position: relative;
+          padding-left: 60px;
+          min-height: 40px;
+        }
+        .ad-label {
+          position: absolute;
+          top: 8px;
+          left: 8px;
+          z-index: 1;
+        }
+      </style>
+    </div>
+    <header>
+      <img style="border-radius: 50%; height: 250px;" src="Img/image.png">
+      <h1>Tu nombre aquí</h1>
+    </header>
+    <section>
+      <h2>¿Quién soy?</h2>
+      <p>Aquí va tu texto con la información que desees que aparezca en este apartado, tambien puedes cambiar este apartado por otros que quieras ya que son solo referencia</p>
+      <h2>Intereses</h2>
+      <ul>
+        <li>Interes 1</li>
+        <li>Interes 2</li>
+        <li>Interes 3
+        </li>
+      </ul>
+      <h2>Contacto</h2>
+
+      <p>
+        Discord:
+        <a href="https://trollasinc.github.io/">Aqui debes poner como quieres que tus visitantes o clientes se puedan poner en contacto contigo</a>
+      </p>
+    </section>
+    <section class="youtube-section">
+      <h2>Lista</h2>
+      <ul class="youtube-list">
+        <li class="youtube-item">
+          <a
+            class="youtube-link"
+            href=""
+            target="_blank"
+            rel="noopener">
+            <img
+              class="youtube-thumb"
+              src=""
+              alt="Test" />
+            Aqui puedes poner elementos
+          </a>
+        </li>
+        <li class="youtube-item">
+          <a
+            class="youtube-link"
+            href=""
+            target="_blank"
+            rel="noopener">
+            <img
+              class="youtube-thumb"
+              src=""
+              alt="Test" />
+            Organizados en listas para que tus visitantes
+          </a>
+        </li>
+        <li class="youtube-item">
+          <a
+            class="youtube-link"
+            href="https://www.youtube.com/watch?v=KIfCTFg0yHA"
+            target="_blank"
+            rel="noopener">
+            <img
+              class="youtube-thumb"
+              src=""
+              alt="Test" />
+            Puedan ver tus elementos mas organizados
+          </a>
+        </li>
+      </ul>
+      <script>
+        // Anuncios con imagen y rotación automática
+        const ads = [
+          {
+            img: "img/Logos/channels4_profile.jpg",
+            alt: "LeonTrollas",
+            url: "https://youtube.com/@leontrollas",
+            text: "¡Suscribete a LeonTrollas!",
+          },
+          {
+            img: "Img/Logos/Trollas. Inc.png",
+            alt: "Trollas. Inc.",
+            url: "https://leonperriman.wixsite.com/trollasinc",
+            text: "¡Únete a el equipo Trollas. Inc.!",
+          },
+        ];
+        let adIndex = 0;
+        const adsBanner = document.querySelector(".ads-banner");
+        function renderAd() {
+          const ad = ads[adIndex];
+          adsBanner.innerHTML = `
+        <div class="ad-item">
+          <span class="ad-label">Anuncio</span>
+          <img src="${ad.img}" alt="${ad.alt}" class="ad-img" />
+          <a href="${ad.url}" target="_blank" rel="noopener">${ad.text}</a>
+        </div>
+          `;
+        }
+        renderAd();
+        setInterval(() => {
+          adIndex = (adIndex + 1) % ads.length;
+          renderAd();
+        }, 4000);
+      </script>
+      <style>
+        .ad-img {
+          width: 32px;
+          height: 32px;
+          object-fit: contain;
+          border-radius: 4px;
+          background: #fff;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+      </style>
+    </section>
+      <style>
+        .featured-channels-section {
+          background: rgba(255, 255, 255, 0.35);
+          backdrop-filter: blur(12px);
+          border-radius: 16px;
+          margin: 32px auto 0 auto;
+          max-width: 600px;
+          padding: 32px;
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        }
+        .featured-channels-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .featured-channel-item {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          border-radius: 12px;
+          padding: 8px;
+          transition: background 0.2s;
+        }
+        .featured-channel-item:hover {
+          background: rgba(0, 0, 0, 0.07);
+        }
+        .featured-channel-thumb {
+          width: 48px;
+          height: 48px;
+          border-radius: 8px;
+          object-fit: cover;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .featured-channel-link {
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+          color: #222;
+          font-weight: 500;
+          font-size: 1.1em;
+          gap: 16px;
+          width: 100%;
+        }
+      </style>
+    <section>
+      <h2>Texto</h2>
+      <p>Aqui puedes poner mas texto si lo deseas, o tambien puedes eliminar este apartado si no lo necesitas, tambien puedes añadir secciones personalizadas o añadir mas de las que ves aquí.
+      </p>
+    </section>
+    <footer class="footer-section">
+      <div class="footer-content">
+      <p>Esta web ha sido desarrollada por Trollas. Inc.</p>
+      <p>
+        Más info en:
+        <a href="https://leonperriman.wixsite.com/trollasinc" target="_blank" rel="noopener">Trollas. Inc.</a>
+      </p>
+      </div>
+      <style>
+      .footer-section {
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(12px);
+        border-radius: 0;
+        margin: 32px 0 0 0;
+        max-width: none;
+        width: 100vw;
+        left: 0;
+        right: 0;
+        padding: 32px 0;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        position: relative;
+      }
+      .footer-content {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 0 16px;
+        text-align: center;
+        font-size: 0.95em;
+        color: #222;
+      }
+      .footer-content a {
+        color: #0074d9;
+        text-decoration: underline;
+        transition: color 0.2s;
+      }
+      .footer-content a:hover {
+        color: #005fa3;
+      }
+      .footer-content p {
+        margin: 0 0 8px 0;
+      }
+      </style>
+    </footer>
+      </div>
+    </footer>
+
+    <div class="watermark">
+      <img
+        src="Img/Logos/Trollas. Inc.png"
+        alt="Marca de agua"
+        class="watermark-img" />
+      <div class="watermark-text">Trollas. Inc.</div>
+    </div>
+    <style>
+      .watermark {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.5;
+        z-index: 9999;
+        pointer-events: none;
+        user-select: none;
+      }
+      .watermark-img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        margin-bottom: 4px;
+      }
+      .watermark-text {
+        font-size: 12px;
+        color: #222;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 4px;
+        padding: 2px 8px;
+        text-align: center;
+      }
+    </style>
+ <div
+      id="google_translate_element"
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        display: none;
+      "></div>
+    <script type="text/javascript" src="../../translate.js"></script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="../../../editor.js"></script>
+    </body>
+</html>

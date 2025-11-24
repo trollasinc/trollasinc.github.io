@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="Logos/Trollas. Inc.png" />
+    <title>Trollas. Inc.</title>
+    <script type="module" src="/ip-security.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f0f4f8;
+        color: #111;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-weight: 700;
+      }
+      nav a {
+        margin-left: 1.5rem;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+      }
+      section {
+        padding: 4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      .cards {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        width: 280px;
+        text-align: center;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+      .card2 {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem;
+        width: 100%;
+        text-align: center;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+      }
+      .card2:hover {
+        transform: translateY(-5px);
+      }
+      .card img {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+      }
+      footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: 0.9rem;
+        color: #555;
+      }
+      h2 {
+        margin-bottom: 1rem;
+      }
+      p {
+        color: #333;
+      }
+      header {
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .menu-container {
+        position: relative;
+      }
+      .dropdown {
+        display: none;
+        position: absolute;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        margin-top: 0.5rem;
+        min-width: 350px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .dropdown a {
+        display: block;
+        padding: 0.5rem 1rem;
+        text-decoration: none;
+        color: #111;
+      }
+      .dropdown a:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.5rem 1.5rem;
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+        transition: background 0.3s;
+      }
+      .btn:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // asegurar que el DOM cargue
+        const link = document.getElementById("menuLink");
+        const menu = document.getElementById("dropdownMenu");
+
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!link.contains(e.target) && !menu.contains(e.target)) {
+            menu.style.display = "none";
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Overlay -->
+    <div
+      id="cookieOverlay"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(2px);
+        z-index: 999;
+        display: none;
+      "></div>
+
+    <!-- Cookie Consent Modal -->
+    <div
+      id="cookieConsent"
+      style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 20px 30px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        display: none;
+        max-width: 400px;
+        text-align: center;
+        z-index: 1000;
+      ">
+      <h1 style="margin-bottom: 10px; font-size: 20px; color: #111">
+        Uso de Cookies 🍪
+      </h1>
+      <p style="margin-bottom: 15px; color: #111; font-size: 14px">
+        En Trollas. Inc. utilizamos cookies con fines de estadísticas y control
+        del tráfico en la web. Recopilamos información sobre tu IP, el navegador
+        que utilizas, el sistema operativo, la fecha y hora de tu visita y el
+        idioma de tu dispositivo. También registramos descargas y redirecciones
+        realizadas en nuestra web. Esta información es privada y no se comparte
+        con nadie; se utiliza únicamente con fines estadísticos de la empresa.
+        Al hacer clic en "Aceptar", consientes el uso de cookies. Si no aceptas,
+        algunas funciones de la web podrían no estar disponibles.
+      </p>
+      <button
+        id="acceptCookies"
+        style="
+          padding: 8px 18px;
+          margin-right: 10px;
+          border: none;
+          border-radius: 6px;
+          background-color: #3498db;
+          color: white;
+          cursor: pointer;
+          font-weight: 500;
+        ">
+        Aceptar
+      </button>
+      <button
+        id="rejectCookies"
+        style="
+          padding: 8px 18px;
+          border: none;
+          border-radius: 6px;
+          background-color: #e74c3c;
+          color: white;
+          cursor: pointer;
+          font-weight: 500;
+        ">
+        Rechazar
+      </button>
+    </div>
+
+    <script>
+      // Mostrar el modal si no hay cookie de consentimiento
+      window.addEventListener("load", () => {
+        if (!localStorage.getItem("cookiesAceptadas")) {
+          document.getElementById("cookieConsent").style.display = "block";
+          document.getElementById("cookieOverlay").style.display = "block";
+        }
+      });
+
+      // Aceptar cookies
+      document.getElementById("acceptCookies").addEventListener("click", () => {
+        localStorage.setItem("cookiesAceptadas", "true");
+        document.getElementById("cookieConsent").style.display = "none";
+        document.getElementById("cookieOverlay").style.display = "none";
+      });
+
+      // Rechazar cookies
+      document.getElementById("rejectCookies").addEventListener("click", () => {
+        alert(
+          "Las cookies son obligatorias para el correcto funcionamiento de la web."
+        );
+      });
+    </script>
+    <header>
+      <h1>Trollas. Inc.</h1>
+      <nav>
+        <div class="menu-container">
+          <a href="#" id="menuLink">Juegos ▼</a>
+          <div class="dropdown" id="dropdownMenu">
+            <a href="Balancea/">Balancea! Balancea! y que no se caiga</a>
+            <a href="Pougotchi/">POUGOTCHI</a>
+            <a href="Roblox/RampCrashRace/">Ramp Crash Race</a>
+            <a href="Roblox/TralaleroTralalaOBBY/">Tralalero Tralala OBBY</a>
+          </div>
+        </div>
+        <a href="#webs">Páginas Webs</a>
+        <a href="Blog/">Blog</a>
+        <a href="#servicios">Servicios</a>
+        <a href="#acerca">Acerca</a>
+      </nav>
+    </header>
+    <section id="acerca">
+      <h2>Acerca de Trollas. Inc. 🏢</h2>
+      <p>
+        En Trollas. Inc., nos dedicamos a crear juegos divertidos y desarrollar
+        páginas webs a disposición de nuestros clientes. Comenzamos en 2024 con
+        el lanzamiento de nuestro primer juego, "Balancea! Balancea!", y desde
+        entonces hemos estado creciendo y expandiendo nuestros servicios.
+      </p>
+    </section>
+    <section id="juegos">
+      <h2>Nuestros Juegos 🎮</h2>
+      <div class="cards">
+        <div class="card">
+          <img src="Logos/Balancea.png" alt="Balancea! Balancea!" />
+          <h3>Balancea! Balancea!</h3>
+          <p>
+            Un divertido juego de equilibro con objetos ¿Qué puede salir mal?
+          </p>
+        </div>
+        <div class="card">
+          <img src="Logos/Pougotchi.png" alt="POUGOTCHI" />
+          <h3>POUGOTCHI</h3>
+          <p>Una mezcla entre un POU y un TAMAGOTCHI, Simple pero con IA 😎</p>
+        </div>
+        <!--<div class="card">
+          <img src="Logos/Ramp Crash Race.png" alt="POUGOTCHI" />
+          <h3>Ramp Crash Race</h3>
+          <p>
+            Deslizate por la colina hasta la muerte, no hay limites, pero si
+            obstaculos...
+          </p>
+        </div>-->
+        <div class="card">
+          <img src="Logos/Tralalero Tralala OBBY.png" alt="POUGOTCHI" />
+          <h3>Tralalero Tralala OBBY</h3>
+          <p>
+            Consigue llegar al final del obby sin caerte. Un juego sencillo y
+            divertido para todas las edades.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="webs">
+      <h2>Nuestras Páginas Webs 💻</h2>
+      <div class="cards">
+        <div class="card">
+          <a href="Germany_18/" style="text-decoration: none">
+            <img
+              src="Germany_18/Img/Logos/channels4_profile(2).jpg"
+              alt="Balancea! Balancea!" />
+            <h3 style="color: #000">Germany_18</h3>
+            <p>
+              Visita ahora la nueva web de Germán, más conocido como Germany_18,
+              un youtuber que se dedica a subir videos de videojuegos.
+            </p>
+          </a>
+        </div>
+        <div class="card">
+          <a href="AdriElGamer/" style="text-decoration: none">
+            <img
+              src="AdriElGamer/Img/Logos/channels4_profile (4).jpg"
+              alt="Balancea! Balancea!" />
+            <h3 style="color: #000">Adri El Gamer</h3>
+            <p>
+              Soy Adrián, más conocido como Adri el Gamer. Me gustan subir
+              videos a YouTube de gatos y videojuegos. Espero que os guste.
+            </p>
+          </a>
+        </div>
+        <div
+          class="card"
+          style="
+            width: 300px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+          ">
+          <a href="Webs/" style="text-decoration: none; width: 100%">
+            <h1
+              style="
+                color: black;
+                font-size: clamp(24px, 8vw, 60px);
+                white-space: nowrap;
+                margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              ">
+              ...
+            </h1>
+            <h3 style="color: #000; margin-top: 20px">Explorar más webs</h3>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicios">
+      <h2>Servicios 💻</h2>
+      <div class="cards">
+        <div class="card2">
+          <h3>Creación de Páginas Web</h3>
+          <p>Diseñamos webs minimalistas y modernas que destacan tu marca.</p>
+          <a href="Tarifas/" class="btn">Ver Tarifas</a>
+        </div>
+      </div>
+    </section>
+    <footer>
+      &copy; 2025 Trollas. Inc. Todos los derechos reservados.
+      <br />
+      v.3.0
+    </footer>
+    <div
+      id="google_translate_element"
+      style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 50px;
+        display: none;
+      "></div>
+    <script type="text/javascript" src="translate.js"></script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script src="../editor.js"></script>
+    </body>
+</html>
