@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TOP CHAT</title>
+    <link rel="stylesheet" href="top_chat_style.css" />
+  </head>
+  <body>
+    <header>
+      <button id="menuBtn">☰</button>
+      <h1>TOP CHAT</h1>
+      <div class="user-info">
+        <span id="userEmail"></span>
+        <button id="logoutBtn">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <div id="container">
+      <aside id="chatSidebar">
+        <button id="addChatBtn">+</button>
+        <ul id="chatList"></ul>
+      </aside>
+
+      <main id="chatDiv" style="display: none">
+        <div id="chatHeader"></div>
+        <div id="chatBox"></div>
+        <div class="message-input">
+          <input id="msg" type="text" placeholder="Escribe mensaje..." />
+          <button id="sendMsgBtn">Enviar</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Nuevo chat o grupo popup -->
+    <div id="newChatPopup" class="popup">
+      <div class="popup-content">
+        <h3>Crear</h3>
+        <label>
+          <input type="radio" name="chatType" value="chat" checked />
+          Chat
+        </label>
+        <label>
+          <input type="radio" name="chatType" value="group" />
+          Grupo
+        </label>
+
+        <div id="chatFields">
+          <input
+            id="newChatEmail"
+            type="email"
+            placeholder="Email del usuario" />
+        </div>
+
+        <div id="groupFields" style="display: none">
+          <input id="groupName" type="text" placeholder="Nombre del grupo" />
+          <input
+            id="groupMembers"
+            type="text"
+            placeholder="Emails separados por coma" />
+        </div>
+
+        <button id="createChatBtn">Crear</button>
+        <button id="closePopupBtn">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- Login popup -->
+    <div id="loginPopup" class="popup">
+      <div class="popup-content">
+        <h2>Login / Registro</h2>
+        <input id="email" type="email" placeholder="tuemail@ejemplo.com" />
+        <input id="pass" type="password" placeholder="Contraseña" />
+        <div class="popup-buttons">
+          <button id="registerBtn">Registrar</button>
+          <button id="loginBtn">Login</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="overlay"></div>
+
+    <script type="module" src="top_chat_main.js"></script>
+  </body>
+</html>
