@@ -1,7 +1,4 @@
 // top_chat_main.js
-// Requiere: ./top_chat_api.js exportando `firebaseConfig`
-// HTML debe contener los ids usados abajo (ver conversación)
-
 import { firebaseConfig } from "./top_chat_api.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
@@ -25,82 +22,68 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Init Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
 
-  // --- State
   let currentUser = null;
-  let unsubChats = null; // unsub for chat list
-  let unsubCurrentChat = null; // unsub for messages in currently open chat
+  let unsubChats = null;
+  let unsubCurrentChat = null;
   let currentMessagesColRef = null;
 
-  // --- Helper to safe-get DOM elements
   const $ = (id) => document.getElementById(id);
 
-  // --- DOM refs (must match your HTML)
-  const menuBtn = $("menuBtn");
-  const sidebar = $("chatSidebar");
-  const chatList = $("chatList");
-  const chatBox = $("chatBox");
-  const chatHeader = $("chatHeader");
-  const chatDiv = $("chatDiv");
-  const overlay = $("overlay");
+  // DOM
+  const menuBtn = $("menuBtn"),
+    sidebar = $("chatSidebar"),
+    chatList = $("chatList"),
+    chatBox = $("chatBox"),
+    chatHeader = $("chatHeader"),
+    chatDiv = $("chatDiv"),
+    overlay = $("overlay");
 
-  // login popup
-  const loginPopup = $("loginPopup");
-  const emailInput = $("email");
-  const passInput = $("pass");
-  const registerBtn = $("registerBtn");
-  const loginBtn = $("loginBtn");
-  const logoutBtn = $("logoutBtn");
-  const userEmailSpan = $("userEmail");
+  const loginPopup = $("loginPopup"),
+    emailInput = $("email"),
+    passInput = $("pass"),
+    registerBtn = $("registerBtn"),
+    loginBtn = $("loginBtn"),
+    logoutBtn = $("logoutBtn"),
+    userEmailSpan = $("userEmail");
 
-  // new chat popup
-  const addChatBtn = $("addChatBtn");
-  const newChatPopup = $("newChatPopup");
-  const closePopupBtn = $("closePopupBtn");
-  const createChatBtn = $("createChatBtn");
-  const newChatEmail = $("newChatEmail");
-  const chatFields = $("chatFields");
-  const groupFields = $("groupFields");
-  const groupNameInput = $("groupName");
-  const groupMembersInput = $("groupMembers");
+  const addChatBtn = $("addChatBtn"),
+    newChatPopup = $("newChatPopup"),
+    closePopupBtn = $("closePopupBtn"),
+    createChatBtn = $("createChatBtn"),
+    newChatEmail = $("newChatEmail"),
+    chatFields = $("chatFields"),
+    groupFields = $("groupFields"),
+    groupNameInput = $("groupName"),
+    groupMembersInput = $("groupMembers");
 
-  // message input
-  const msgInput = $("msg");
-  const sendMsgBtn = $("sendMsgBtn");
+  const msgInput = $("msg"),
+    sendMsgBtn = $("sendMsgBtn");
 
-  // Basic guards
   if (!chatList || !chatBox || !chatHeader) {
     console.error(
-      "DOM: faltan elementos obligatorios (#chatList, #chatBox, #chatHeader). Revisa tu HTML."
+      "Faltan elementos obligatorios (#chatList, #chatBox, #chatHeader)."
     );
     return;
   }
 
-  // --- UI helpers
-  const showOverlay = (show) => {
-    if (overlay) overlay.style.display = show ? "block" : "none";
-  };
-  const showPopup = (el, show) => {
-    if (el) el.style.display = show ? "block" : "none";
-  };
+  const showOverlay = (show) =>
+    overlay && (overlay.style.display = show ? "block" : "none");
+  const showPopup = (el, show) =>
+    el && (el.style.display = show ? "block" : "none");
 
-  // Sidebar toggle
   if (menuBtn && sidebar)
     menuBtn.addEventListener("click", () => sidebar.classList.toggle("hidden"));
 
-  // --- Auth actions
+  // --- Auth
   if (registerBtn)
     registerBtn.addEventListener("click", async () => {
-      const email = emailInput?.value?.trim();
-      const pass = passInput?.value?.trim();
-      if (!email || !pass) {
-        alert("Error: email o contraseña vacíos");
-        return;
-      }
+      const email = emailInput?.value?.trim(),
+        pass = passInput?.value?.trim();
+      if (!email || !pass) return alert("Email o contraseña vacíos");
       try {
         await createUserWithEmailAndPassword(auth, email, pass);
       } catch (e) {
@@ -111,12 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loginBtn)
     loginBtn.addEventListener("click", async () => {
-      const email = emailInput?.value?.trim();
-      const pass = passInput?.value?.trim();
-      if (!email || !pass) {
-        alert("Error: email o contraseña vacíos");
-        return;
-      }
+      const email = emailInput?.value?.trim(),
+        pass = passInput?.value?.trim();
+      if (!email || !pass) return alert("Email o contraseña vacíos");
       try {
         await signInWithEmailAndPassword(auth, email, pass);
       } catch (e) {
@@ -135,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  // --- New chat/group popup handlers
+  // --- Chat / Group Popup
   if (addChatBtn)
     addChatBtn.addEventListener("click", () => {
       showPopup(newChatPopup, true);
@@ -147,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
       showOverlay(false);
     });
 
-  // radio switching for chat/group (safe)
   const radioNodeList = document.getElementsByName("chatType");
   Array.from(radioNodeList || []).forEach((r) =>
     r.addEventListener("change", () => {
@@ -159,38 +138,27 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   );
 
-  // --- Utility: compute 'other' email from chatId robustly (handles possible underscores)
   function otherEmailFromChatId(chatId, myEmail) {
     if (!chatId || !myEmail) return null;
-    // common case: chatId = email1_email2 and only one _ used
     const double = myEmail + "_";
     const rev = "_" + myEmail;
     if (chatId.startsWith(double)) return chatId.slice(double.length);
     if (chatId.endsWith(rev)) return chatId.slice(0, -rev.length);
-    // fallback: try split and assume one part equals myEmail
     const parts = chatId.split("_");
     const otherParts = parts.filter((p) => p !== myEmail);
     if (otherParts.length === 1) return otherParts[0];
-    // last resort: return chatId but caller must handle
     return chatId;
   }
 
-  // --- Create chat/group
   if (createChatBtn)
     createChatBtn.addEventListener("click", async () => {
-      if (!currentUser) {
-        alert("No autenticado");
-        return;
-      }
+      if (!currentUser) return alert("No autenticado");
       const type =
         Array.from(radioNodeList || []).find((r) => r.checked)?.value || "chat";
       try {
         if (type === "chat") {
           const target = newChatEmail?.value?.trim();
-          if (!target) {
-            alert("Email destino vacío");
-            return;
-          }
+          if (!target) return alert("Email destino vacío");
           const chatId = [currentUser.email, target].sort().join("_");
           await setDoc(doc(db, "TOPCHAT_CHATS", chatId), {
             created: Date.now(),
@@ -202,10 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean);
-          if (!name || members.length === 0) {
-            alert("Nombre o miembros vacíos");
-            return;
-          }
+          if (!name || members.length === 0)
+            return alert("Nombre o miembros vacíos");
           if (!members.includes(currentUser.email))
             members.push(currentUser.email);
           const chatId = "group_" + Date.now();
@@ -215,146 +181,130 @@ document.addEventListener("DOMContentLoaded", () => {
             created: Date.now(),
           });
         }
-        // reset + close
         if (newChatEmail) newChatEmail.value = "";
         if (groupNameInput) groupNameInput.value = "";
         if (groupMembersInput) groupMembersInput.value = "";
         showPopup(newChatPopup, false);
         showOverlay(false);
-        // reload list will auto-update because onSnapshot active
       } catch (e) {
         console.error(e);
         alert("Error crear chat/grupo: " + (e.code || e.message));
       }
     });
 
-  // --- Load chat list (real-time). unsub previous if any.
-  function subscribeChatList() {
-    if (unsubChats) unsubChats();
-    const q = query(collection(db, "TOPCHAT_CHATS"));
-    unsubChats = onSnapshot(
-      q,
-      (snapshot) => {
-        chatList.innerHTML = "";
-        snapshot.docs.forEach((docSnap) => {
-          const data = docSnap.data() || {};
-          const chatId = docSnap.id;
-
-          // Group if members array exists
-          if (Array.isArray(data.members)) {
-            if (!currentUser) return;
-            if (!data.members.includes(currentUser.email)) return; // not a member
-            const li = document.createElement("li");
-            li.className = "group-item";
-            li.dataset.chatId = chatId;
-            li.dataset.type = "group";
-            li.textContent = data.name || chatId;
-
-            // add-member button
-            const addBtn = document.createElement("button");
-            addBtn.className = "add-member-btn";
-            addBtn.type = "button";
-            addBtn.title = "Añadir miembro";
-            addBtn.textContent = "+";
-            addBtn.addEventListener("click", async (ev) => {
-              ev.stopPropagation();
-              const email = prompt(
-                "Introduce emails a añadir, separados por comas:"
-              );
-              if (!email) return;
-              const newMembers = email
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean);
-              if (newMembers.length === 0) return;
-              try {
-                await updateDoc(doc(db, "TOPCHAT_CHATS", chatId), {
-                  members: arrayUnion(...newMembers),
-                });
-              } catch (err) {
-                console.error(err);
-                alert("Error añadir miembros: " + (err.code || err.message));
-              }
-            });
-
-            li.appendChild(addBtn);
-            li.addEventListener("click", () =>
-              openChat(chatId, true, data.name || chatId)
-            );
-            chatList.appendChild(li);
-            return;
-          }
-
-          // Else: treat as 1:1 chat if ID contains user's email
-          if (!currentUser) return;
-          if (typeof chatId !== "string") return;
-          if (!chatId.includes(currentUser.email)) return;
-          const other = otherEmailFromChatId(chatId, currentUser.email);
-          if (!other) return;
-          const li = document.createElement("li");
-          li.className = "chat-item";
-          li.dataset.chatId = chatId;
-          li.dataset.type = "chat";
-          li.dataset.other = other;
-          li.textContent = other;
-          li.addEventListener("click", () => openChat(chatId, false, other));
-          chatList.appendChild(li);
-        });
-      },
-      (err) => {
-        console.error("onSnapshot chats error:", err);
-        // don't throw; UI remains empty
-      }
+  // --- Notifications
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission().then((perm) =>
+      console.log("Permiso notificaciones:", perm)
     );
   }
 
-  // --- Open chat (chatId is document id in TOPCHAT_CHATS)
+  function updateBadge(li, count) {
+    if (!li) return;
+    let badge = li.querySelector(".unread-badge");
+    if (count === 0) {
+      if (badge) badge.remove();
+      return;
+    }
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "unread-badge";
+      badge.style.cssText = `
+        background:#007bff;color:white;font-size:12px;
+        border-radius:50%;padding:2px 6px;margin-left:5px;
+      `;
+      li.appendChild(badge);
+    }
+    badge.textContent = count;
+  }
+
+  function subscribeChat(chatId, li) {
+    const messagesCol = collection(db, "TOPCHAT_CHATS", chatId, "messages");
+    const q = query(messagesCol, orderBy("created"));
+    return onSnapshot(q, (snapshot) => {
+      let unreadCount = 0;
+      snapshot.docs.forEach((docSnap) => {
+        const msg = docSnap.data();
+        if (!msg.readBy) msg.readBy = [];
+        if (
+          !msg.readBy.includes(currentUser.email) &&
+          msg.sender !== currentUser.email
+        ) {
+          unreadCount++;
+          if (Notification.permission === "granted") {
+            new Notification(`Nuevo mensaje de ${msg.sender}`, {
+              body: msg.text,
+            });
+          }
+        }
+      });
+      updateBadge(li, unreadCount);
+    });
+  }
+
+  function subscribeAllChats() {
+    chatList.querySelectorAll("li").forEach((li) => {
+      const chatId = li.dataset.chatId;
+      if (!chatId) return;
+      const unsub = subscribeChat(chatId, li);
+      li.addEventListener("click", async () => {
+        const messagesCol = collection(db, "TOPCHAT_CHATS", chatId, "messages");
+        const snapshot = await (
+          await import(
+            "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"
+          )
+        ).getDocs(messagesCol);
+        snapshot.docs.forEach(async (docSnap) => {
+          const msgRef = doc(
+            db,
+            "TOPCHAT_CHATS",
+            chatId,
+            "messages",
+            docSnap.id
+          );
+          const msgData = docSnap.data();
+          if (!msgData.readBy) msgData.readBy = [];
+          if (!msgData.readBy.includes(currentUser.email)) {
+            await updateDoc(msgRef, { readBy: arrayUnion(currentUser.email) });
+          }
+        });
+        updateBadge(li, 0);
+      });
+    });
+  }
+
   function openChat(chatId, isGroup, displayName) {
     if (!chatId) return;
     chatHeader.textContent = displayName || chatId;
     chatBox.innerHTML = "";
 
-    // unsubscribe previous messages
     if (unsubCurrentChat) {
       try {
         unsubCurrentChat();
-      } catch (e) {
-        /*ignore*/
-      }
+      } catch (e) {}
       unsubCurrentChat = null;
     }
+
     currentMessagesColRef = collection(db, "TOPCHAT_CHATS", chatId, "messages");
     const q = query(currentMessagesColRef, orderBy("created"));
 
-    unsubCurrentChat = onSnapshot(
-      q,
-      (snapshot) => {
-        chatBox.innerHTML = "";
-        snapshot.docs.forEach((docSnap) => {
-          const msg = docSnap.data() || {};
-          const text = msg.text || "";
-          const sender = msg.sender || "";
-          const bubble = document.createElement("div");
-          bubble.className =
-            "bubble " +
-            (sender === (currentUser && currentUser.email) ? "self" : "other");
-          bubble.textContent = (isGroup ? sender + ": " : "") + text;
-          chatBox.appendChild(bubble);
-        });
-        chatBox.scrollTop = chatBox.scrollHeight;
-      },
-      (err) => {
-        console.error("onSnapshot messages error:", err);
-      }
-    );
+    unsubCurrentChat = onSnapshot(q, (snapshot) => {
+      chatBox.innerHTML = "";
+      snapshot.docs.forEach((docSnap) => {
+        const msg = docSnap.data() || {};
+        const text = msg.text || "";
+        const sender = msg.sender || "";
+        const bubble = document.createElement("div");
+        bubble.className =
+          "bubble " + (sender === currentUser.email ? "self" : "other");
+        bubble.textContent = (isGroup ? sender + ": " : "") + text;
+        chatBox.appendChild(bubble);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
 
-    // set send handler (replace previous)
     if (sendMsgBtn) {
       sendMsgBtn.onclick = async () => {
-        if (!currentUser) {
-          alert("No autenticado");
-          return;
-        }
         const text = msgInput?.value?.trim();
         if (!text) return;
         try {
@@ -372,43 +322,89 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Auth listener: show/hide login and subscribe/unsubscribe lists
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
+
     if (user) {
       if (loginPopup) loginPopup.style.display = "none";
       if (userEmailSpan) userEmailSpan.textContent = user.email || "";
-      // ensure chatDiv visible
       if (chatDiv) chatDiv.style.display = "flex";
-      subscribeChatList();
+
+      // cargar lista de chats
+      if (unsubChats) unsubChats();
+      const q = query(collection(db, "TOPCHAT_CHATS"));
+      unsubChats = onSnapshot(q, (snapshot) => {
+        chatList.innerHTML = "";
+        snapshot.docs.forEach((docSnap) => {
+          const data = docSnap.data() || {};
+          const chatId = docSnap.id;
+
+          let li;
+          if (Array.isArray(data.members)) {
+            if (!data.members.includes(currentUser.email)) return;
+            li = document.createElement("li");
+            li.className = "group-item";
+            li.dataset.chatId = chatId;
+            li.dataset.type = "group";
+            li.textContent = data.name || chatId;
+
+            const addBtn = document.createElement("button");
+            addBtn.className = "add-member-btn";
+            addBtn.type = "button";
+            addBtn.textContent = "+";
+            addBtn.addEventListener("click", async (ev) => {
+              ev.stopPropagation();
+              const email = prompt("Emails a añadir, separados por comas:");
+              if (!email) return;
+              const newMembers = email
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean);
+              if (newMembers.length === 0) return;
+              await updateDoc(doc(db, "TOPCHAT_CHATS", chatId), {
+                members: arrayUnion(...newMembers),
+              });
+            });
+            li.appendChild(addBtn);
+          } else {
+            if (!chatId.includes(currentUser.email)) return;
+            const other = otherEmailFromChatId(chatId, currentUser.email);
+            if (!other) return;
+            li = document.createElement("li");
+            li.className = "chat-item";
+            li.dataset.chatId = chatId;
+            li.dataset.type = "chat";
+            li.dataset.other = other;
+            li.textContent = other;
+          }
+
+          li.addEventListener("click", () =>
+            openChat(
+              chatId,
+              Array.isArray(data.members),
+              data.name || li.textContent
+            )
+          );
+          chatList.appendChild(li);
+        });
+        subscribeAllChats();
+      });
     } else {
-      // show login popup
       if (loginPopup) loginPopup.style.display = "flex";
       if (userEmailSpan) userEmailSpan.textContent = "";
       if (chatDiv) chatDiv.style.display = "none";
+
       if (unsubChats) {
-        try {
-          unsubChats();
-        } catch (e) {}
+        unsubChats();
         unsubChats = null;
       }
       if (unsubCurrentChat) {
-        try {
-          unsubCurrentChat();
-        } catch (e) {}
+        unsubCurrentChat();
         unsubCurrentChat = null;
       }
+
       chatList.innerHTML = "";
       chatBox.innerHTML = "";
-      chatHeader.textContent = "";
     }
   });
-
-  // small defensive default: if already logged in when script loads
-  if (auth.currentUser) {
-    currentUser = auth.currentUser;
-    if (loginPopup) loginPopup.style.display = "none";
-    if (userEmailSpan) userEmailSpan.textContent = currentUser.email || "";
-    subscribeChatList();
-  }
 });

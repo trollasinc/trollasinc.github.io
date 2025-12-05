@@ -1,19 +1,24 @@
 import { firebaseConfig } from "./api.js";
+import { firebaseConfig as HC_CONFIG } from "./Administración/top_chat_proyect_beta/top_chat_api.js";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import {
   getFirestore,
   collection,
-  getDocs,
   addDoc,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
   increment,
   query,
   where,
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -352,4 +357,64 @@ window.manejarIP = function (data) {
   }, 10000); // 10s
 
   document.body.appendChild(script);
+  // ---------------- Health Checker ----------------
+  const hcApp = initializeApp(HC_CONFIG, "hcApp"); // app separada
+  const authHC = getAuth(hcApp);
+  const dbHC = getFirestore(hcApp);
+
+  const HEALTH_EMAIL = "health_checker_web@test.com";
+  const HEALTH_PASS = "health_checker_TInc";
+  const TARGET_EMAIL = "trollasinc2024@gmail.com";
+
+  let healthInterval = null;
+
+  async function health_checker() {
+    if (document.querySelector("div[style*='z-index: 999999']")) {
+      console.warn("Overlay bloqueante activo, health checker no se inicia.");
+      return;
+    }
+
+    try {
+      // Login health checker
+      await signInWithEmailAndPassword(authHC, HEALTH_EMAIL, HEALTH_PASS);
+      console.log("Health checker logueado ✅");
+
+      // Limpiar interval anterior
+      if (healthInterval) clearInterval(healthInterval);
+
+      const enviarOK = async () => {
+        try {
+          // Referencia al chat principal
+          const chatId = [HEALTH_EMAIL, TARGET_EMAIL].sort().join("_");
+          const chatRef = doc(dbHC, "TOPCHAT_CHATS", chatId); // doc principal
+          const messagesRef = collection(chatRef, "messages"); // subcolección correcta
+
+          await addDoc(messagesRef, {
+            text: "health_checker: ok",
+            sender: HEALTH_EMAIL,
+            created: Date.now(),
+          });
+          console.log("Health checker: ok ✅");
+        } catch (err) {
+          console.error("No se pudo enviar mensaje:", err);
+        }
+      };
+
+      // Enviar primero y luego cada 5s
+      await enviarOK();
+      healthInterval = setInterval(enviarOK, 5000);
+
+      // Captura de errores mientras el checker está activo
+      window.addEventListener("error", async () => await enviarOK());
+      window.addEventListener(
+        "unhandledrejection",
+        async () => await enviarOK()
+      );
+    } catch (err) {
+      console.error("Error login health checker:", err);
+    }
+  }
+
+  console.log("Para iniciar el health checker utiliza: health_checker()");
+  window.health_checker = health_checker;
 })();
