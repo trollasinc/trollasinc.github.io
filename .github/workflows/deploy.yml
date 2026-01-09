@@ -18,6 +18,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./  # cambia si tu index.html no está en la raíz
+          publish_branch: main
 
       # 3️⃣ Firebase Hosting deploy
       - uses: w9jds/firebase-action@v2.2.1
