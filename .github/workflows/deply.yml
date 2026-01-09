@@ -1,25 +1,25 @@
-name: Deploy GitHub Pages + Firebase
+name: GitHub + Firebase Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # tu rama principal
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1️⃣ Clonar repo
+      # 1️⃣ Clona tu repo
       - uses: actions/checkout@v3
 
-      # 2️⃣ Deploy a GitHub Pages
+      # 2️⃣ GitHub Pages deploy
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./  # la carpeta de tu web
-          
-      # 3️⃣ Deploy a Firebase Hosting
+          publish_dir: ./  # cambia si tu index.html no está en la raíz
+
+      # 3️⃣ Firebase Hosting deploy
       - uses: w9jds/firebase-action@v2.2.1
         with:
           args: deploy --only hosting
